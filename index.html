@@ -502,14 +502,14 @@ select.c-input{appearance:none;}
   <div class="login-card">
     <svg class="bigcrest" viewBox="0 0 100 100" id="crestLogin" style="width:64px;height:64px;margin:0 auto 6px"></svg>
     <div class="wordmark" style="font-size:26px;text-align:center;color:var(--ink)">SEM FIM</div>
-    <div style="text-align:center;color:var(--ink-dim);font-size:13px;margin:6px 0 16px">Entra pra postar no mural do grupo</div>
-    <label class="c-lbl">Seu nome</label>
-    <input type="text" id="lgName" class="c-input" placeholder="Como você aparece pro grupo" maxlength="24">
+    <div style="text-align:center;color:var(--ink-dim);font-size:13px;margin:6px 0 16px">Entre com seu telefone e a senha do grupo</div>
+    <label class="c-lbl">Seu telefone</label>
+    <input type="tel" id="lgPhone" class="c-input" placeholder="Ex: (19) 99888-7777" inputmode="tel">
     <label class="c-lbl">Senha do grupo</label>
     <input type="password" id="lgPin" class="c-input" placeholder="Combinada no grupo">
     <button class="post-btn" id="lgEnter" style="width:100%;margin-top:14px">Entrar</button>
     <div id="lgErr" class="c-status"></div>
-    <button id="lgSkip" class="lg-skip">só olhar, sem postar</button>
+    <div style="text-align:center;color:var(--ink-faint);font-size:11.5px;margin-top:12px">Você só precisa entrar uma vez neste aparelho.</div>
   </div>
 </div>
 
@@ -594,7 +594,12 @@ const CONFIG = {
   SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5yZnFwa2JuaXZvb2tkaXl6c3Z4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NzE0ODIsImV4cCI6MjEwNDE0NzQ4Mn0.1zyKhiZJAemle4YqwNFcnOIp3VpxXbnJQH4HPgIhin4',
   BUCKET: 'fotos',                  // bucket do Storage (público)
   GROUP_PIN: 'moto2026',            // senha do grupo (troque pela que quiser)
-  SPOTIFY: '37i9dQZF1DX9wC1KY45plY' // playlist do grupo
+  SPOTIFY: '37i9dQZF1DX9wC1KY45plY',// playlist do grupo
+  // Participantes: cada um entra com o telefone + a senha acima.
+  // Ex.: {name:'João', phone:'19998887777'}
+  PARTICIPANTS: [
+    // (me mande os nomes + telefones que eu preencho aqui)
+  ]
 };
 
 /* ============ DATA ============ */
@@ -700,18 +705,18 @@ const routeCoords = [
    [ título do artigo , idioma(wiki) , legenda ]
    Pra trocar por outra foto: mude o título, ou o idioma ('pt','es','en'). */
 const dayPhotos = {
- 1:  [["Cataratas do Iguaçu","pt","Cataratas do Iguaçu"], ["Itaipu","pt","Represa de Itaipu"]],
+ 1:  [["Cataratas do Iguaçu","pt","Cataratas do Iguaçu"], ["Usina Hidrelétrica de Itaipu","pt","Represa de Itaipu"]],
  2:  [["Río Uruguay","es","Rio Uruguai · fronteira"]],
  3:  [["Pampa","es","Pampa argentina"]],
  4:  [["Aconcagua","es","Aconcágua"], ["Mendoza","es","Mendoza"]],
  5:  [["Cordillera de los Andes","es","Cordilheira dos Andes"], ["Puente del Inca","es","Puente del Inca"]],
  6:  [["Volcán Osorno","es","Vulcão Osorno"]],
- 7:  [["Carretera Austral","es","Início da Carretera Austral"], ["Parque nacional Hornopirén","es","Parque Hornopirén"]],
+ 7:  [["Carretera Austral","es","Início da Carretera Austral"], ["Fiordo de Reloncaví","es","Fiorde de Reloncaví"]],
  8:  [["Parque nacional Pumalín","es","Parque Pumalín"], ["Volcán Chaitén","es","Vulcão Chaitén"]],
  9:  [["Reserva nacional Cerro Castillo","es","Cerro Castillo"], ["Coyhaique","es","Coyhaique"]],
  10: [["Lago General Carrera","es","Lago General Carrera"]],
- 11: [["Capillas de Mármol","es","Capillas de Mármol"]],
- 12: [["Villa O'Higgins","es","Villa O'Higgins"], ["Campo de Hielo Patagónico Sur","es","Glaciares"]],
+ 11: [["Catedral de Mármol","es","Capillas de Mármol"]],
+ 12: [["Carretera Austral","es","Reta final da Austral"], ["Villa O'Higgins","es","Villa O'Higgins"]],
  13: [["Glaciar O'Higgins","es","Glaciar O'Higgins"]],
  14: [["Lago General Carrera","es","Lago General Carrera (sul)"]],
  15: [["La Trochita","es","La Trochita — trem histórico"]],
@@ -1092,18 +1097,29 @@ function fileToDataURL(file){return new Promise((res,rej)=>{const r=new FileRead
 // ---- usuário / login ----
 function getUser(){ try{return JSON.parse(localStorage.getItem('esf_user'));}catch(e){return null;} }
 function setUser(u){ localStorage.setItem('esf_user',JSON.stringify(u)); }
+function normPhone(s){ return (s||'').replace(/\D/g,''); }
 function requireLogin(){ if(getUser())return true; document.getElementById('loginGate').classList.add('on'); return false; }
+function showGate(){ if(!getUser()) document.getElementById('loginGate').classList.add('on'); }
+function tryLogin(){
+  const phone=normPhone(document.getElementById('lgPhone').value);
+  const pin=document.getElementById('lgPin').value.trim();
+  const err=document.getElementById('lgErr');
+  if(phone.length<8){ err.className='c-status err'; err.textContent='Digite seu telefone com DDD.'; return; }
+  if(pin!==CONFIG.GROUP_PIN){ err.className='c-status err'; err.textContent='Senha do grupo incorreta.'; return; }
+  let name=null;
+  const list=CONFIG.PARTICIPANTS||[];
+  if(list.length){
+    const p=list.find(x=>{ const a=normPhone(x.phone); return a===phone || (a.length>=8 && (a.endsWith(phone.slice(-8))||phone.endsWith(a.slice(-8)))); });
+    if(!p){ err.className='c-status err'; err.textContent='Esse telefone não está na lista do grupo.'; return; }
+    name=p.name;
+  } else { name='Piloto'; } // enquanto a lista não foi preenchida
+  setUser({name,phone});
+  document.getElementById('loginGate').classList.remove('on');
+  refreshMural(); if(openDayNum)loadDayDiary(openDayNum);
+}
 function setupLogin(){
-  const gate=document.getElementById('loginGate');
-  document.getElementById('lgEnter').addEventListener('click',()=>{
-    const name=document.getElementById('lgName').value.trim();
-    const pin=document.getElementById('lgPin').value.trim();
-    const err=document.getElementById('lgErr');
-    if(!name){err.className='c-status err';err.textContent='Escreve seu nome 🙂';return;}
-    if(pin!==CONFIG.GROUP_PIN){err.className='c-status err';err.textContent='Senha do grupo incorreta.';return;}
-    setUser({name}); gate.classList.remove('on'); refreshMural(); if(openDayNum)loadDayDiary(openDayNum);
-  });
-  document.getElementById('lgSkip').addEventListener('click',()=>gate.classList.remove('on'));
+  document.getElementById('lgEnter').addEventListener('click',tryLogin);
+  document.getElementById('lgPin').addEventListener('keydown',e=>{ if(e.key==='Enter')tryLogin(); });
 }
 
 // ---- estado do mural ----
@@ -1121,8 +1137,10 @@ function postHtml(p,compact){
   const u=getUser();
   const ini=(p.author||'?').trim().charAt(0).toUpperCase();
   const when=new Date(p.created_at).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
-  const badge = p.kind==='checkin' ? '<span class="post-badge">✅ tô bem</span>'
-    : (!compact && p.day?('<span class="post-badge day">Dia '+p.day+'</span>'):'');
+  const place=(p.day && dayByN(+p.day))? dayByN(+p.day).to.split(' · ')[0] : '';
+  const badge = p.kind==='checkin'
+    ? '<span class="post-badge">✅ tô bem'+(place?' · 📍'+esc(place):'')+'</span>'
+    : (!compact && p.day?('<span class="post-badge day">📍 Dia '+p.day+' · '+esc(place)+'</span>'):'');
   const canDel = u && p.author===u.name;
   const del = canDel? '<button class="pdel" data-pid="'+p.id+'" title="Excluir">🗑️</button>' : '';
   // reações
@@ -1345,12 +1363,16 @@ const dayRouteIdx={1:1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,10:10,11:10,12:11,13:11,1
 function largouAt(){ const l=POSTS.filter(p=>p.kind==='largou').map(p=>p.created_at).sort(); return l.length?l[0]:null; }
 function computeTripDay(){
   const l=largouAt();
-  let d = l ? Math.floor((Date.now()-new Date(l).getTime())/864e5) : -1;
-  POSTS.forEach(p=>{ if(p.kind==='checkin' && +p.day>d) d=+p.day; }); // check-in adianta a moto
+  if(l){ // largaram: conta pelos dias reais desde a largada (fonte da verdade)
+    const d=Math.floor((Date.now()-new Date(l).getTime())/864e5);
+    return d>21?21:d;
+  }
+  // ainda não largaram: se alguém marcou "cheguei" num dia, a moto vai pra lá
+  let d=-1; POSTS.forEach(p=>{ if(p.kind==='checkin' && +p.day>d) d=+p.day; });
   return d>21?21:d;
 }
 function tripDayNum(){ return computeTripDay(); }
-let motoMarker=null, simRunning=false;
+let motoMarker=null;
 function motoLL(d){ if(d<1) return routeCoords[0]; if(d>21) return routeCoords[19]; return routeCoords[dayRouteIdx[d]]; }
 function ensureMoto(ll){
   if(!motoMarker){
@@ -1362,36 +1384,20 @@ function placeMoto(){ if(!_map)return; const d=computeTripDay(); ensureMoto(moto
 function updateMotoBar(d){
   const info=document.getElementById('mbInfo'), btn=document.getElementById('simBtn');
   if(!info||!btn) return;
-  if(d<0){ info.innerHTML='🏍️ <b>Prontos pra largar</b> · toque em Largar quando saírem'; btn.textContent='🏍️ Largar!'; }
-  else if(d===0){ info.innerHTML='🏁 <b>Largaram!</b> · saindo de Limeira'; btn.textContent='▶ Rever a viagem'; }
-  else if(d>=21){ info.innerHTML='🏁 <b>Expedição concluída!</b> · 10.682 km'; btn.textContent='▶ Rever a viagem'; }
-  else { const dd=dayByN(d); info.innerHTML='<b>Dia '+d+' de 21</b> · '+(dd?dd.to.split(' · ')[0]:''); btn.textContent='▶ Rever a viagem'; }
-}
-function onSimBtn(){ if(computeTripDay()<0) doLargar(); else simulate(); }
-function simulate(){
-  if(simRunning||!_map) return; simRunning=true;
-  const info=document.getElementById('mbInfo');
-  const pts=routeCoords, stepsPerSeg=16; let seg=0, t=0;
-  ensureMoto(pts[0]);
-  const idxToDay={}; Object.keys(dayRouteIdx).forEach(dn=>{ const i=dayRouteIdx[dn]; if(!(i in idxToDay)) idxToDay[i]=+dn; });
-  (function tick(){
-    if(seg>=pts.length-1){ simRunning=false; placeMoto(); return; }
-    const a=pts[seg], b=pts[seg+1], k=t/stepsPerSeg;
-    motoMarker.setLatLng([a[0]+(b[0]-a[0])*k, a[1]+(b[1]-a[1])*k]);
-    t++;
-    if(t>stepsPerSeg){ t=0; seg++; const dn=idxToDay[seg]; if(dn&&info){const dd=dayByN(dn); info.innerHTML='🏍️ <b>Dia '+dn+'</b> · '+(dd?dd.to.split(' · ')[0]:'');} }
-    setTimeout(()=>requestAnimationFrame(tick),26);
-  })();
+  if(d<0){ info.innerHTML='🏍️ <b>Prontos pra largar</b> · toquem em Largar quando saírem'; btn.style.display=''; btn.textContent='🏍️ Largar!'; }
+  else if(d===0){ info.innerHTML='🏁 <b>Largaram!</b> · saindo de Limeira'; btn.style.display='none'; }
+  else if(d>=21){ info.innerHTML='🏁 <b>Expedição concluída!</b> · 10.682 km'; btn.style.display='none'; }
+  else { const dd=dayByN(d); info.innerHTML='<b>Dia '+d+' de 21</b> · '+(dd?dd.to.split(' · ')[0]:''); btn.style.display='none'; }
 }
 function setupMoto(){
   placeMoto();
   const btn=document.getElementById('simBtn');
-  if(btn) btn.addEventListener('click',onSimBtn);
+  if(btn) btn.addEventListener('click',doLargar);
   setInterval(placeMoto,1800000); // reposiciona a cada 30 min
 }
 
 /* ============ INIT ============ */
-buildMap(); buildTimeline(); buildChecklist(); buildAttn(); countdown(); setupMoto(); setupMural();
+buildMap(); buildTimeline(); buildChecklist(); buildAttn(); countdown(); setupMoto(); setupMural(); showGate();
 setInterval(countdown,30000);
 </script>
 </body>
