@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
   --ink:#f3ede0; --ink-dim:#b9c2b3; --ink-faint:#7f8a7e;
@@ -69,11 +70,28 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .mpin:active{transform:scale(.88);}
 .mpin.finish{background:#12100c;border-color:var(--amber);font-size:16px;
   box-shadow:0 0 0 2px rgba(242,166,60,.6),0 4px 10px rgba(0,0,0,.6);}
-.map-hud{position:absolute;left:0;right:0;bottom:calc(90px + var(--safe-b));
-  display:flex;justify-content:center;pointer-events:none;z-index:600;}
-.map-hint{pointer-events:none;background:rgba(12,19,16,.86);border:1px solid var(--line);
-  color:var(--ink-dim);font-size:12px;padding:7px 14px;border-radius:20px;backdrop-filter:blur(4px);
-  display:flex;align-items:center;gap:7px;box-shadow:var(--shadow);}
+.mpin.start{background:#6fce8f;border-color:#0c2a17;color:#0c2a17;font-size:13px;
+  box-shadow:0 0 0 2px rgba(111,206,143,.55),0 4px 10px rgba(0,0,0,.6);}
+.mpin.passeio{background:var(--sky);border-color:#08222a;color:#062028;
+  box-shadow:0 0 0 2px rgba(120,192,212,.55),0 4px 10px rgba(0,0,0,.6);}
+.moto-wrap{background:none;border:none;}
+.moto{font-size:27px;line-height:1;filter:drop-shadow(0 3px 5px rgba(0,0,0,.7));
+  animation:motobob 1.5s ease-in-out infinite;}
+@keyframes motobob{50%{transform:translateY(-3px)}}
+.moto-bar{position:absolute;left:10px;right:10px;bottom:14px;z-index:600;
+  display:flex;align-items:center;gap:10px;justify-content:space-between;
+  background:rgba(12,19,16,.9);border:1px solid var(--line);border-radius:16px;padding:9px 13px;
+  backdrop-filter:blur(6px);box-shadow:var(--shadow);}
+.mb-info{font-size:12.5px;color:var(--ink-dim);line-height:1.3;}
+.mb-info b{color:var(--sand);font-family:'Oswald';font-weight:600;}
+.mb-btn{flex:none;background:var(--amber);color:#20160b;font-weight:700;border-radius:12px;
+  padding:9px 13px;font-size:12.5px;white-space:nowrap;}
+.mb-btn:active{background:var(--amber-deep);}
+.map-hint{position:absolute;top:10px;left:10px;right:10px;z-index:600;text-align:center;
+  background:rgba(12,19,16,.86);border:1px solid var(--line);
+  color:var(--ink-dim);font-size:12px;padding:8px 14px;border-radius:20px;backdrop-filter:blur(4px);
+  box-shadow:var(--shadow);transition:opacity .3s,transform .3s;}
+.map-hint.hide{opacity:0;transform:translateY(-8px);pointer-events:none;}
 
 /* ---------- Photo gallery in sheet ---------- */
 .gal{display:flex;gap:10px;overflow-x:auto;margin:10px 0 2px;padding-bottom:6px;
@@ -146,12 +164,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .sheet.on{transform:translateY(0);}
 .grab{width:42px;height:5px;border-radius:5px;background:var(--line);margin:9px auto 2px;flex:none;}
 .sheet-scroll{overflow-y:auto;padding:4px 18px calc(24px + var(--safe-b));-webkit-overflow-scrolling:touch;}
-.scene{height:132px;border-radius:16px;margin:8px 0 6px;position:relative;overflow:hidden;
-  display:flex;align-items:flex-end;padding:14px;border:1px solid var(--line-soft);}
-.scene .emoji{position:absolute;right:12px;top:8px;font-size:58px;opacity:.9;filter:drop-shadow(0 3px 6px rgba(0,0,0,.4));}
-.scene .daytag{font-family:'Bebas Neue';font-size:15px;letter-spacing:2px;color:rgba(255,255,255,.9);
-  background:rgba(0,0,0,.32);padding:3px 10px;border-radius:20px;backdrop-filter:blur(3px);}
-.scene .place{position:absolute;left:14px;bottom:14px;font-family:'Oswald';font-weight:700;
+.scene{min-height:92px;border-radius:16px;margin:8px 0 6px;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:space-between;gap:12px;padding:14px;border:1px solid var(--line-soft);}
+.scene .daytag{align-self:flex-start;font-family:'Bebas Neue';font-size:15px;letter-spacing:2px;color:rgba(255,255,255,.92);
+  background:rgba(0,0,0,.34);padding:3px 10px;border-radius:20px;backdrop-filter:blur(3px);}
+.scene .place{font-family:'Oswald';font-weight:700;line-height:1.15;
   font-size:22px;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.6);}
 .sheet h2{font-family:'Oswald';font-size:16px;margin:16px 0 8px;color:var(--sand);
   display:flex;align-items:center;gap:8px;}
@@ -212,7 +229,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .info-hero{margin:8px 16px 4px;background:linear-gradient(160deg,#1a2620,#0e1712);
   border:1px solid var(--line);border-radius:18px;padding:20px 18px;text-align:center;position:relative;overflow:hidden;}
 .info-hero .bigcrest{width:76px;height:76px;margin:2px auto 8px;}
-.info-hero .tagline{font-family:'Bebas Neue';font-size:15px;letter-spacing:3px;color:var(--amber);margin-top:4px;}
+.info-hero .tagline{font-family:'Bebas Neue';font-size:14px;letter-spacing:2px;color:var(--amber);margin-top:4px;}
 .info-hero .desc{font-size:13.5px;color:var(--ink-dim);line-height:1.55;margin-top:8px;}
 .cd{display:flex;justify-content:center;gap:8px;margin-top:14px;}
 .cd div{background:#0a120d;border:1px solid var(--line-soft);border-radius:12px;padding:9px 4px;min-width:56px;}
@@ -231,14 +248,76 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .tip .te{font-size:18px;flex:none;}
 .credit{text-align:center;color:var(--ink-faint);font-size:11.5px;padding:8px 20px 20px;line-height:1.6;}
 
+/* ---------- Mural / Feed ---------- */
+.selos-wrap{padding:10px 16px 2px;}
+.selos-title{font-family:'Oswald';font-weight:600;font-size:12.5px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--ink-faint);margin:2px 2px 8px;}
+.selos{display:flex;gap:9px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;}
+.selos::-webkit-scrollbar{display:none;}
+.selo{flex:none;width:92px;text-align:center;background:var(--panel);border:1px solid var(--line-soft);
+  border-radius:14px;padding:11px 6px;opacity:.4;filter:grayscale(1);transition:.25s;}
+.selo.on{opacity:1;filter:none;border-color:rgba(242,166,60,.4);
+  background:linear-gradient(160deg,var(--panel2),var(--bg2));}
+.selo .se{font-size:26px;line-height:1;}
+.selo .sn{font-size:10px;color:var(--ink-dim);margin-top:6px;line-height:1.2;font-weight:600;}
+.selo.on .sn{color:var(--sand);}
+.playlist-card{margin:12px 16px 2px;border-radius:16px;overflow:hidden;border:1px solid var(--line-soft);}
+.playlist-card iframe{display:block;width:100%;border:0;}
+.mural-actions{padding:14px 16px 4px;}
+.post-btn{background:var(--amber);color:#20160b;font-weight:700;border-radius:13px;
+  padding:13px 16px;font-size:15px;width:100%;}
+.post-btn:active{background:var(--amber-deep);}
+.post-btn.ghost{background:var(--panel2);color:var(--sky);border:1px solid var(--line);}
+.feed{padding:12px 16px calc(20px + var(--safe-b));display:flex;flex-direction:column;gap:12px;}
+.feed-empty{text-align:center;color:var(--ink-faint);font-size:13.5px;padding:30px 10px;line-height:1.6;}
+.post{background:linear-gradient(155deg,var(--panel),var(--bg2));border:1px solid var(--line-soft);
+  border-radius:16px;overflow:hidden;}
+.post-top{display:flex;align-items:center;gap:9px;padding:12px 14px 8px;}
+.post-av{width:32px;height:32px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 35% 30%,var(--amber),var(--amber-deep));color:#20160b;font-weight:700;font-family:'Oswald';font-size:14px;}
+.post-who{font-family:'Oswald';font-weight:600;font-size:14.5px;color:var(--ink);}
+.post-meta{font-size:11px;color:var(--ink-faint);margin-top:1px;}
+.post-badge{margin-left:auto;font-size:10.5px;font-weight:600;padding:3px 9px;border-radius:20px;
+  background:rgba(111,206,143,.13);color:var(--ok);border:1px solid rgba(111,206,143,.3);}
+.post-badge.day{background:rgba(242,166,60,.13);color:var(--amber);border-color:rgba(242,166,60,.3);}
+.post-txt{padding:2px 14px 12px;font-size:14.5px;line-height:1.5;color:var(--ink);}
+.post img.post-photo{width:100%;display:block;max-height:420px;object-fit:cover;}
+
+/* ---------- Composer / inputs ---------- */
+.c-lbl{display:block;font-size:12px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:1px;
+  margin:14px 0 6px;font-weight:600;}
+.c-input{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:13px 14px;color:var(--ink);font-size:15px;font-family:inherit;outline:none;}
+.c-input:focus{border-color:var(--amber);}
+select.c-input{appearance:none;}
+.c-preview img{width:100%;border-radius:12px;margin-top:10px;display:block;}
+.c-status{font-size:13px;margin-top:10px;text-align:center;min-height:18px;}
+.c-status.ok{color:var(--ok);} .c-status.err{color:var(--danger);}
+
+/* ---------- Login gate ---------- */
+.login-gate{position:fixed;inset:0;z-index:70;background:radial-gradient(120% 60% at 50% 0%,#132019,#0a120d);
+  display:none;align-items:center;justify-content:center;padding:24px;}
+.login-gate.on{display:flex;}
+.login-card{width:100%;max-width:360px;background:var(--bg2);border:1px solid var(--line);
+  border-radius:20px;padding:22px 20px;box-shadow:var(--shadow);}
+.lg-skip{display:block;margin:14px auto 0;color:var(--ink-faint);font-size:12.5px;text-decoration:underline;}
+
+/* ---------- Weather (day sheet) ---------- */
+.wx{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line-soft);
+  border-radius:13px;padding:11px 14px;margin-top:8px;}
+.wx .wxe{font-size:30px;line-height:1;}
+.wx .wxt b{font-family:'Bebas Neue';font-size:22px;color:var(--ink);letter-spacing:.5px;}
+.wx .wxt span{display:block;font-size:12px;color:var(--ink-dim);margin-top:1px;}
+.wx.muted{color:var(--ink-faint);font-size:12.5px;justify-content:center;}
+
 /* ---------- Bottom nav ---------- */
 .nav{position:fixed;left:0;right:0;bottom:0;z-index:40;max-width:560px;margin:0 auto;
-  display:grid;grid-template-columns:repeat(4,1fr);
-  padding:8px 8px calc(8px + var(--safe-b));
+  display:grid;grid-template-columns:repeat(5,1fr);
+  padding:8px 6px calc(8px + var(--safe-b));
   background:linear-gradient(0deg,var(--bg) 60%,rgba(12,19,16,.85));
   border-top:1px solid var(--line);backdrop-filter:blur(10px);}
 .nav button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;color:var(--ink-faint);
-  font-size:10.5px;font-weight:600;letter-spacing:.3px;border-radius:12px;transition:color .2s;}
+  font-size:10px;font-weight:600;letter-spacing:.2px;border-radius:12px;transition:color .2s;}
 .nav button svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.8;}
 .nav button.active{color:var(--amber);}
 .nav button.active svg{filter:drop-shadow(0 0 5px var(--amber-glow));}
@@ -261,7 +340,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 <section id="view-mapa" class="view active">
   <div style="position:relative">
     <div id="map"></div>
-    <div class="map-hud"><div class="map-hint">👆 Toque num ponto pra ver o dia e as fotos</div></div>
+    <div class="map-hint" id="mapHint">👆 Clique no número para abrir a rota do dia e as fotos</div>
+    <div class="moto-bar" id="motoBar">
+      <div class="mb-info" id="mbInfo">—</div>
+      <button class="mb-btn" id="simBtn">🏍️ Largar</button>
+    </div>
   </div>
 </section>
 
@@ -275,7 +358,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   <div class="stat-row">
     <div class="stat"><b>21</b><span>dias</span></div>
     <div class="stat"><b>10.682</b><span>km</span></div>
-    <div class="stat"><b>3</b><span>países</span></div>
+    <div class="stat"><b>4</b><span>países</span></div>
     <div class="stat"><b>~151h</b><span>na estrada</span></div>
   </div>
   <div class="tl" id="timeline"></div>
@@ -307,7 +390,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   <div class="info-hero">
     <svg class="bigcrest" viewBox="0 0 100 100" id="crestBig"></svg>
     <div class="wordmark" style="font-size:34px;letter-spacing:2px;color:var(--ink)">SEM FIM</div>
-    <div class="tagline">BRASIL · ARGENTINA · CHILE</div>
+    <div class="tagline">BRASIL · ARGENTINA · CHILE · PARAGUAI</div>
     <div class="desc">Uma volta de moto pela Patagônia e pela Carretera Austral, saindo e voltando pra casa em Limeira. 21 dias, mais de dez mil quilômetros, quatro balsas e uma cordilheira inteira.</div>
     <div class="cd" id="countdown"></div>
   </div>
@@ -339,6 +422,63 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   <div class="credit">Feito com carinho para a Expedição Sem Fim 🧭<br>Boa viagem e voltem inteiros.</div>
 </section>
 
+<!-- ===== MURAL ===== -->
+<section id="view-mural" class="view">
+  <div class="section">
+    <div class="eyebrow">Todos juntos na estrada</div>
+    <div class="h-lead">Mural da expedição</div>
+    <div class="sub" id="muralSub">Fotos, recados e check-ins do grupo — atualiza pra todo mundo.</div>
+  </div>
+
+  <div class="selos-wrap">
+    <div class="selos-title">🏅 Conquistas</div>
+    <div class="selos" id="selos"></div>
+  </div>
+
+  <div class="playlist-card" id="playlistCard"></div>
+
+  <div class="mural-actions">
+    <button class="post-btn" id="openPost">＋ Postar no mural</button>
+  </div>
+
+  <div id="feed" class="feed"><div class="feed-empty" id="feedEmpty">Carregando…</div></div>
+</section>
+
+<!-- ===== COMPOSER ===== -->
+<div class="scrim" id="cScrim"></div>
+<div class="sheet" id="cSheet">
+  <div class="grab"></div>
+  <button class="sheet-close" id="cClose">✕</button>
+  <div class="sheet-scroll">
+    <h2 style="margin-top:12px">Postar no mural</h2>
+    <label class="c-lbl">Dia da viagem</label>
+    <select id="cDay" class="c-input"></select>
+    <label class="c-lbl">Recado (opcional)</label>
+    <textarea id="cText" class="c-input" rows="3" placeholder="Conta como foi o dia…"></textarea>
+    <label class="c-lbl">Foto (opcional)</label>
+    <input type="file" id="cPhoto" accept="image/*" class="c-input">
+    <div id="cPreview" class="c-preview"></div>
+    <button class="post-btn" id="cSubmit" style="width:100%;margin-top:14px">Publicar</button>
+    <div id="cStatus" class="c-status"></div>
+  </div>
+</div>
+
+<!-- ===== LOGIN GATE ===== -->
+<div class="login-gate" id="loginGate">
+  <div class="login-card">
+    <svg class="bigcrest" viewBox="0 0 100 100" id="crestLogin" style="width:64px;height:64px;margin:0 auto 6px"></svg>
+    <div class="wordmark" style="font-size:26px;text-align:center;color:var(--ink)">SEM FIM</div>
+    <div style="text-align:center;color:var(--ink-dim);font-size:13px;margin:6px 0 16px">Entra pra postar no mural do grupo</div>
+    <label class="c-lbl">Seu nome</label>
+    <input type="text" id="lgName" class="c-input" placeholder="Como você aparece pro grupo" maxlength="24">
+    <label class="c-lbl">Senha do grupo</label>
+    <input type="password" id="lgPin" class="c-input" placeholder="Combinada no grupo">
+    <button class="post-btn" id="lgEnter" style="width:100%;margin-top:14px">Entrar</button>
+    <div id="lgErr" class="c-status"></div>
+    <button id="lgSkip" class="lg-skip">só olhar, sem postar</button>
+  </div>
+</div>
+
 <!-- ===== SHEET ===== -->
 <div class="scrim" id="scrim"></div>
 <div class="sheet" id="sheet">
@@ -353,6 +493,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
     <svg viewBox="0 0 24 24"><path d="M9 3 3 5v16l6-2 6 2 6-2V3l-6 2-6-2Z"/><path d="M9 3v16M15 5v16"/></svg>Mapa</button>
   <button data-v="roteiro">
     <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="20" cy="18" r="1.5" fill="currentColor" stroke="none"/></svg>Roteiro</button>
+  <button data-v="mural">
+    <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.6"/><path d="m5 17 5-4 4 3 2-2 3 3"/></svg>Mural</button>
   <button data-v="check">
     <svg viewBox="0 0 24 24"><path d="M4 5h16v16H4z"/><path d="m8 12 3 3 5-6"/></svg>Checklist</button>
   <button data-v="info">
@@ -363,38 +505,63 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* ============ CREST / LOGO ============ */
 const CREST = `
 <defs>
-  <radialGradient id="sky" cx="50%" cy="30%" r="75%">
-    <stop offset="0%" stop-color="#f2a63c"/><stop offset="55%" stop-color="#d9822b"/><stop offset="100%" stop-color="#7a4418"/>
+  <radialGradient id="disc" cx="50%" cy="36%" r="72%">
+    <stop offset="0%" stop-color="#20344a"/><stop offset="58%" stop-color="#132234"/><stop offset="100%" stop-color="#0a1421"/>
   </radialGradient>
   <linearGradient id="ring" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#2a3a2f"/><stop offset="100%" stop-color="#101a14"/>
+    <stop offset="0%" stop-color="#3a2a16"/><stop offset="100%" stop-color="#12100c"/>
   </linearGradient>
+  <linearGradient id="rose" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#f8cd77"/><stop offset="100%" stop-color="#d9822b"/>
+  </linearGradient>
+  <path id="arcTop" d="M50 50 m-40 0 a40 40 0 0 1 80 0"/>
+  <path id="arcBot" d="M50 50 m-34 0 a34 34 0 0 0 68 0"/>
 </defs>
+<!-- badge -->
 <circle cx="50" cy="50" r="48" fill="url(#ring)" stroke="#f2a63c" stroke-width="2"/>
-<circle cx="50" cy="50" r="37" fill="url(#sky)"/>
-<circle cx="50" cy="50" r="37" fill="none" stroke="#1a120a" stroke-width="1" opacity=".3"/>
-<!-- sun rays -->
-<g opacity=".35" stroke="#fff2d8" stroke-width="1.4">
-  <line x1="50" y1="16" x2="50" y2="24"/><line x1="66" y1="20" x2="63" y2="27"/>
-  <line x1="34" y1="20" x2="37" y2="27"/><line x1="76" y1="34" x2="70" y2="38"/><line x1="24" y1="34" x2="30" y2="38"/>
+<circle cx="50" cy="50" r="39" fill="url(#disc)" stroke="#f2a63c" stroke-width="1" opacity=".85"/>
+<circle cx="50" cy="50" r="39" fill="none" stroke="#0a1421" stroke-width="1" opacity=".5"/>
+<!-- compass rose -->
+<g transform="translate(50,49)">
+  <g fill="#7a5a30" opacity=".55">
+    <path d="M0,0 L5,-5 L18,-18 L5,5 Z"/><path d="M0,0 L5,-5 L18,-18 L5,5 Z" transform="rotate(90)"/>
+    <path d="M0,0 L5,-5 L18,-18 L5,5 Z" transform="rotate(180)"/><path d="M0,0 L5,-5 L18,-18 L5,5 Z" transform="rotate(270)"/>
+  </g>
+  <g fill="url(#rose)">
+    <path d="M0,0 L4.5,-5 L0,-30 L-4.5,-5 Z"/><path d="M0,0 L4.5,-5 L0,-30 L-4.5,-5 Z" transform="rotate(90)"/>
+    <path d="M0,0 L4.5,-5 L0,-30 L-4.5,-5 Z" transform="rotate(180)"/><path d="M0,0 L4.5,-5 L0,-30 L-4.5,-5 Z" transform="rotate(270)"/>
+  </g>
+  <text x="0" y="-31.5" font-family="Bebas Neue" font-size="7" fill="#f8cd77" text-anchor="middle">N</text>
 </g>
-<!-- andes silhouette -->
-<path d="M13 58 L26 40 L34 50 L44 33 L55 49 L64 38 L74 52 L87 58 Z" fill="#3c2412" opacity=".9"/>
-<path d="M13 58 L26 40 L31 46 L36 41 L44 33 L50 42 L44 51 L34 50 Z" fill="#6b4523" opacity=".85"/>
-<!-- endless winding road (∞ feel) -->
-<path d="M22 74 C 34 60, 40 74, 50 66 C 60 58, 66 74, 78 62" fill="none" stroke="#f6ead2" stroke-width="4.5" stroke-linecap="round"/>
-<path d="M22 74 C 34 60, 40 74, 50 66 C 60 58, 66 74, 78 62" fill="none" stroke="#3a2712" stroke-width="4.5" stroke-linecap="round" stroke-dasharray="1 6"/>
-<!-- ground -->
-<path d="M13 58 A37 37 0 0 0 87 58 Z" fill="#2f5d3a" opacity=".55"/>
-<!-- outer arc text -->
-<defs><path id="arcTop" d="M50 50 m-40 0 a40 40 0 0 1 80 0" /></defs>
-<text font-family="Bebas Neue" font-size="8.6" letter-spacing="2.6" fill="#f3ede0">
+<!-- motorcycle silhouette -->
+<g transform="translate(50,52)" fill="none" stroke="#f6ead2" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="-12" cy="5" r="6.5"/>
+  <circle cx="12" cy="5" r="6.5"/>
+  <path d="M-12,5 L-5,-4 L5,-4 L8,2 L12,5"/>
+  <path d="M-5,-4 L-1.5,5 L8,2"/>
+  <path d="M5,-4 L9,-8 L13,-7.5"/>
+  <path d="M-6.5,-4 L-1,-4"/>
+</g>
+<!-- arc text -->
+<text font-family="Bebas Neue" font-size="8.4" letter-spacing="2.4" fill="#f3ede0">
   <textPath href="#arcTop" startOffset="50%" text-anchor="middle">· EXPEDIÇÃO SEM FIM ·</textPath>
 </text>
-<text x="50" y="90" font-family="Bebas Neue" font-size="7" letter-spacing="2" fill="#f2a63c" text-anchor="middle">2026 · 10.682 KM</text>
+<text font-family="Bebas Neue" font-size="6.2" letter-spacing="1.6" fill="#f2a63c">
+  <textPath href="#arcBot" startOffset="50%" text-anchor="middle">2026 · 10.682 KM · 2 RODAS</textPath>
+</text>
 `;
 document.getElementById('crestSvg').innerHTML = CREST;
 document.getElementById('crestBig').innerHTML = CREST;
+document.getElementById('crestLogin').innerHTML = CREST;
+
+/* ============ CONFIG (preencher pra ligar o mural na nuvem) ============ */
+const CONFIG = {
+  SUPABASE_URL:  'https://nrfqpkbnivookdiyzsvx.supabase.co',
+  SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5yZnFwa2JuaXZvb2tkaXl6c3Z4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NzE0ODIsImV4cCI6MjEwNDE0NzQ4Mn0.1zyKhiZJAemle4YqwNFcnOIp3VpxXbnJQH4HPgIhin4',
+  BUCKET: 'fotos',                  // bucket do Storage (público)
+  GROUP_PIN: 'moto2026',            // senha do grupo (troque pela que quiser)
+  SPOTIFY: '37i9dQZF1DX9wC1KY45plY' // playlist do grupo
+};
 
 /* ============ DATA ============ */
 // dates 10/09 → 30/09 (bate com os dias da semana da planilha)
@@ -461,26 +628,30 @@ const days = [
 ];
 
 // paradas (lat, lng) — número = dia de chegada
+// coords levemente ajustadas onde os pontos se sobrepõem, pra dar pra ver sem zoom
 const stops = [
- {lbl:'🏁', ll:[-22.5645,-47.4017], day:1, finish:true, finishDay:21}, // Limeira (início/fim)
- {lbl:'1',  ll:[-25.5163,-54.5854], day:1},   // Foz do Iguaçu
- {lbl:'2',  ll:[-29.6900,-57.0870], day:2},   // Paso de los Libres
- {lbl:'3',  ll:[-31.8680,-62.7200], day:3},   // Las Varillas
- {lbl:'4',  ll:[-32.8908,-68.8272], day:4},   // Mendoza
- {lbl:'5',  ll:[-34.9828,-71.2394], day:5},   // Curicó
- {lbl:'6',  ll:[-40.5738,-73.1336], day:6},   // Osorno
- {lbl:'7',  ll:[-41.9497,-72.4394], day:7},   // Hornopirén
- {lbl:'8',  ll:[-42.9153,-72.7080], day:8},   // Chaitén
- {lbl:'9',  ll:[-45.5752,-72.0662], day:9},   // Coyhaique
- {lbl:'10', ll:[-46.6260,-72.6690], day:10},  // Pto Río Tranquilo
- {lbl:'12', ll:[-48.4712,-72.5606], day:12},  // Villa O'Higgins
- {lbl:'14', ll:[-46.5417,-71.7236], day:14},  // Chile Chico
- {lbl:'15', ll:[-42.9110,-71.3190], day:15},  // Esquel
- {lbl:'16', ll:[-38.9516,-68.0591], day:16},  // Neuquén
- {lbl:'17', ll:[-35.6208,-61.3676], day:17},  // Carlos Casares
- {lbl:'18', ll:[-29.7614,-57.0885], day:18},  // Uruguaiana
- {lbl:'19', ll:[-28.2620,-52.4066], day:19},  // Passo Fundo
- {lbl:'20', ll:[-25.0994,-50.1583], day:20},  // Ponta Grossa
+ {lbl:'▶',  ll:[-22.44,-47.52], day:1, start:true},          // SAÍDA · Limeira (Dia 1)
+ {lbl:'1',  ll:[-25.5163,-54.5854], day:1},                   // Foz do Iguaçu
+ {lbl:'2',  ll:[-29.66,-57.16], day:2},                       // Paso de los Libres (lado AR)
+ {lbl:'3',  ll:[-31.8680,-62.7200], day:3},                   // Las Varillas
+ {lbl:'4',  ll:[-32.8908,-68.8272], day:4},                   // Mendoza
+ {lbl:'5',  ll:[-34.9828,-71.2394], day:5},                   // Curicó
+ {lbl:'6',  ll:[-40.5738,-73.1336], day:6},                   // Osorno
+ {lbl:'7',  ll:[-41.9497,-72.4394], day:7},                   // Hornopirén
+ {lbl:'8',  ll:[-42.9153,-72.7080], day:8},                   // Chaitén
+ {lbl:'9',  ll:[-45.5752,-72.0662], day:9},                   // Coyhaique
+ {lbl:'10', ll:[-46.6260,-72.6690], day:10},                  // Pto Río Tranquilo
+ {lbl:'11', ll:[-46.72,-72.60],  day:11, passeio:true},       // Capillas de Mármol (passeio)
+ {lbl:'12', ll:[-48.4712,-72.5606], day:12},                  // Villa O'Higgins
+ {lbl:'13', ll:[-48.58,-72.66],  day:13, passeio:true},       // Fim da Austral (passeio)
+ {lbl:'14', ll:[-46.5417,-71.7236], day:14},                  // Chile Chico
+ {lbl:'15', ll:[-42.9110,-71.3190], day:15},                  // Esquel
+ {lbl:'16', ll:[-38.9516,-68.0591], day:16},                  // Neuquén
+ {lbl:'17', ll:[-35.6208,-61.3676], day:17},                  // Carlos Casares
+ {lbl:'18', ll:[-29.84,-57.02], day:18},                      // Uruguaiana (lado BR)
+ {lbl:'19', ll:[-28.2620,-52.4066], day:19},                  // Passo Fundo
+ {lbl:'20', ll:[-25.0994,-50.1583], day:20},                  // Ponta Grossa
+ {lbl:'🏁', ll:[-22.66,-47.30], day:21, finish:true},         // CHEGADA · Limeira (Dia 21)
 ];
 // rota na ordem de viagem (fecha o loop de volta a Limeira)
 const routeCoords = [
@@ -498,30 +669,29 @@ const dayPhotos = {
  1:  [["Cataratas do Iguaçu","pt","Cataratas do Iguaçu"], ["Itaipu","pt","Represa de Itaipu"]],
  2:  [["Río Uruguay","es","Rio Uruguai · fronteira"]],
  3:  [["Pampa","es","Pampa argentina"]],
- 4:  [["Mendoza","es","Mendoza"], ["Aconcagua","es","Aconcágua ao longe"]],
- 5:  [["Cordillera de los Andes","es","Cordilheira dos Andes"], ["Paso Internacional Los Libertadores","es","Travessia dos Andes"]],
+ 4:  [["Aconcagua","es","Aconcágua"], ["Mendoza","es","Mendoza"]],
+ 5:  [["Cordillera de los Andes","es","Cordilheira dos Andes"], ["Puente del Inca","es","Puente del Inca"]],
  6:  [["Volcán Osorno","es","Vulcão Osorno"]],
- 7:  [["Carretera Austral","es","Início da Carretera Austral"], ["Hornopirén","es","Hornopirén"]],
+ 7:  [["Carretera Austral","es","Início da Carretera Austral"], ["Parque nacional Hornopirén","es","Parque Hornopirén"]],
  8:  [["Parque nacional Pumalín","es","Parque Pumalín"], ["Volcán Chaitén","es","Vulcão Chaitén"]],
- 9:  [["Coyhaique","es","Coyhaique"], ["Reserva nacional Cerro Castillo","es","Cerro Castillo"]],
+ 9:  [["Reserva nacional Cerro Castillo","es","Cerro Castillo"], ["Coyhaique","es","Coyhaique"]],
  10: [["Lago General Carrera","es","Lago General Carrera"]],
  11: [["Capillas de Mármol","es","Capillas de Mármol"]],
- 12: [["Villa O'Higgins","es","Villa O'Higgins"], ["Carretera Austral","es","Fim da Austral"]],
- 13: [["Villa O'Higgins","es","Marco final da estrada"]],
- 14: [["Lago General Carrera","es","Lago General Carrera (sul)"], ["Chile Chico","es","Chile Chico"]],
- 15: [["Parque nacional Los Alerces","es","Parque Los Alerces"], ["La Trochita","es","La Trochita"]],
- 16: [["Neuquén","es","Neuquén"], ["Estepa patagónica","es","Estepe patagônica"]],
+ 12: [["Villa O'Higgins","es","Villa O'Higgins"], ["Campo de Hielo Patagónico Sur","es","Glaciares"]],
+ 13: [["Glaciar O'Higgins","es","Glaciar O'Higgins"]],
+ 14: [["Lago General Carrera","es","Lago General Carrera (sul)"]],
+ 15: [["La Trochita","es","La Trochita — trem histórico"]],
+ 16: [["Estepa patagónica","es","Estepe patagônica"]],
  17: [["Pampa","es","Pampa infinita"]],
  18: [["Río Uruguay","es","Rio Uruguai · volta ao Brasil"]],
- 19: [["Passo Fundo","pt","Passo Fundo"]],
+ 19: [["Rio Grande do Sul","pt","Campos do Sul"]],
  20: [["Parque Estadual de Vila Velha","pt","Vila Velha"]],
  21: [["Limeira","pt","Chegada em casa · Limeira"]],
 };
 
 /* Busca a imagem principal de um artigo da Wikipedia (com CORS liberado). */
 const wikiCache={};
-function wikiImg(title,lang){
-  lang=lang||'es';
+function wikiFetch(title,lang){
   const key=lang+'|'+title;
   if(key in wikiCache) return Promise.resolve(wikiCache[key]);
   const url='https://'+lang+'.wikipedia.org/w/api.php?action=query&format=json'
@@ -533,13 +703,19 @@ function wikiImg(title,lang){
     wikiCache[key]=src; return src;
   }).catch(()=>{wikiCache[key]=null; return null;});
 }
+// tenta o idioma pedido e, se não achar, tenta es/pt/en
+async function wikiImg(title,lang){
+  lang=lang||'es';
+  const langs=[lang,'es','pt','en'].filter((v,i,a)=>a.indexOf(v)===i);
+  for(const l of langs){ const src=await wikiFetch(title,l); if(src) return src; }
+  return null;
+}
 function galleryHtml(photos,sc,emo){
   if(!photos||!photos.length) return '';
   const grad='linear-gradient(150deg,'+sc[0]+','+sc[1]+')';
   const one=photos.length===1?' one':'';
   return '<div class="gal'+one+'">'+photos.map(p=>
     '<div class="gcard" style="background:'+grad+'">'
-     +'<div class="gph">'+emo+'</div>'
      +'<div class="gspin"></div>'
      +'<img data-t="'+encodeURIComponent(p[0])+'" data-l="'+(p[1]||'es')+'" alt="'+p[2]+'">'
      +'<div class="gcap">'+p[2]+'</div>'
@@ -580,10 +756,12 @@ function buildMap(){
 
   // marcadores numerados
   stops.forEach(s=>{
-    const html='<div class="mpin'+(s.finish?' finish':'')+'">'+s.lbl+'</div>';
+    let cls='mpin';
+    if(s.start)cls+=' start'; else if(s.finish)cls+=' finish'; else if(s.passeio)cls+=' passeio';
+    const html='<div class="'+cls+'">'+s.lbl+'</div>';
     const icon=L.divIcon({className:'mpin-wrap',html,iconSize:[29,29],iconAnchor:[15,15]});
-    L.marker(s.ll,{icon}).addTo(map)
-      .on('click',()=>openDay(s.day, s.finish?s.finishDay:null));
+    L.marker(s.ll,{icon,zIndexOffset:(s.start||s.finish)?500:0}).addTo(map)
+      .on('click',()=>openDay(s.day));
   });
 
   map.fitBounds(route.getBounds(),{padding:[26,26]});
@@ -595,6 +773,7 @@ function dayByN(n){return days.find(x=>x.d===n);}
 function badgeHtml(b){const cls=b[1]?('bdg '+b[1]):'bdg';return `<span class="${cls}">${b[0]}</span>`;}
 function openDay(n, finishN){
   const d=dayByN(n); if(!d)return;
+  const mh=document.getElementById('mapHint'); if(mh)mh.classList.add('hide');
   const grad=`linear-gradient(150deg,${d.sc[0]},${d.sc[1]})`;
   const kmTxt = d.km==='—' ? '—' : d.km.toLocaleString('pt-BR');
   let extra='';
@@ -606,7 +785,6 @@ function openDay(n, finishN){
   const galBlock = photos.length ? `<h2>📸 Os lugares</h2>${galleryHtml(photos,d.sc,d.emo)}` : '';
   sheetBody.innerHTML = `
     <div class="scene" style="background:${grad}">
-      <span class="emoji">${d.emo}</span>
       <span class="daytag">DIA ${d.d} · ${d.date} · ${d.dow}</span>
       <span class="place">${d.to}</span>
     </div>
@@ -619,14 +797,23 @@ function openDay(n, finishN){
       <div><b>${d.cum.toLocaleString('pt-BR')}</b><span>km acumulado</span></div>
       <div><b>${d.t}</b><span>tempo Google</span></div>
     </div>
+    <h2>Clima previsto</h2>
+    <div id="dayWx" class="wx muted">buscando previsão…</div>
     <h2>O que ver</h2>
     <ul class="see-list">${d.see.map(s=>`<li>${s}</li>`).join('')}</ul>
     ${d.warn?`<div class="${warnCls}"><span>${d.austral?'⛴️':'⚠️'}</span><span>${d.warn}</span></div>`:''}
     ${extra}
-    <div style="height:6px"></div>`;
+    <h2>📓 Diário do dia</h2>
+    <div id="dayDiary"><div class="feed-empty" style="padding:14px">Carregando…</div></div>
+    <button class="post-btn ghost" id="dayPostBtn" style="margin-top:10px">＋ Postar neste dia</button>
+    <div style="height:10px"></div>`;
   scrim.classList.add('on'); sheet.classList.add('on');
   document.getElementById('sheetBody').scrollTop=0;
   loadSheetPhotos();
+  loadWeather(n);
+  loadDayDiary(n);
+  const dpb=document.getElementById('dayPostBtn');
+  if(dpb) dpb.addEventListener('click',()=>openComposer(n));
 }
 function closeSheet(){scrim.classList.remove('on');sheet.classList.remove('on');}
 scrim.addEventListener('click',closeSheet);
@@ -737,8 +924,263 @@ function switchView(v){
 }
 document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.v)));
 
+/* ============ MURAL: Supabase + fallback local ============ */
+let sb=null, CLOUD=false;
+try{
+  if(CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON && window.supabase){
+    sb=window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON);
+    CLOUD=true;
+  }
+}catch(e){ CLOUD=false; }
+
+function esc(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function dayDate(n){ const dd=9+n; return '2026-09-'+String(dd).padStart(2,'0'); } // dia1 = 10/09
+
+// camada de dados (nuvem OU local)
+const LKEY='esf_mural_v1';
+function localPosts(){ try{return JSON.parse(localStorage.getItem(LKEY))||[];}catch(e){return [];} }
+function saveLocal(a){ try{localStorage.setItem(LKEY,JSON.stringify(a));}catch(e){} }
+const db={
+  async list(){
+    if(CLOUD){ const {data,error}=await sb.from('posts').select('*').order('created_at',{ascending:false});
+      if(error){console.warn(error);return [];} return data||[]; }
+    return localPosts().sort((a,b)=>b.created_at.localeCompare(a.created_at));
+  },
+  async add(p){
+    p.created_at=new Date().toISOString();
+    if(CLOUD){ const {error}=await sb.from('posts').insert(p); if(error)throw error; return; }
+    const a=localPosts(); p.id='l'+Date.now(); a.push(p); saveLocal(a);
+  },
+  async upload(file){
+    if(!CLOUD) return await fileToDataURL(file); // local: guarda a própria imagem
+    const path=Date.now()+'_'+file.name.replace(/[^\w.\-]/g,'_');
+    const {error}=await sb.storage.from(CONFIG.BUCKET).upload(path,file,{upsert:false});
+    if(error)throw error;
+    return sb.storage.from(CONFIG.BUCKET).getPublicUrl(path).data.publicUrl;
+  }
+};
+function fileToDataURL(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file);});}
+
+// ---- usuário / login ----
+function getUser(){ try{return JSON.parse(localStorage.getItem('esf_user'));}catch(e){return null;} }
+function setUser(u){ localStorage.setItem('esf_user',JSON.stringify(u)); }
+function requireLogin(){ if(getUser())return true; document.getElementById('loginGate').classList.add('on'); return false; }
+function setupLogin(){
+  const gate=document.getElementById('loginGate');
+  document.getElementById('lgEnter').addEventListener('click',()=>{
+    const name=document.getElementById('lgName').value.trim();
+    const pin=document.getElementById('lgPin').value.trim();
+    const err=document.getElementById('lgErr');
+    if(!name){err.className='c-status err';err.textContent='Escreve seu nome 🙂';return;}
+    if(pin!==CONFIG.GROUP_PIN){err.className='c-status err';err.textContent='Senha do grupo incorreta.';return;}
+    setUser({name}); gate.classList.remove('on'); renderFeed();
+  });
+  document.getElementById('lgSkip').addEventListener('click',()=>gate.classList.remove('on'));
+}
+
+// ---- feed / mural ----
+async function renderFeed(){
+  const feed=document.getElementById('feed'); if(!feed)return;
+  const posts=await db.list();
+  const u=getUser();
+  document.getElementById('muralSub').textContent = CLOUD
+    ? (u? ('Você está como '+u.name+' · atualiza pra todo o grupo') : 'Entre pra postar — atualiza pra todo o grupo')
+    : 'Modo local (sem nuvem): posts ficam só neste aparelho.';
+  if(!posts.length){ feed.innerHTML='<div class="feed-empty">Ainda sem posts.<br>Seja o primeiro a mandar uma foto da estrada! 🏍️</div>'; return; }
+  feed.innerHTML=posts.map(p=>{
+    const ini=(p.author||'?').trim().charAt(0).toUpperCase();
+    const when=new Date(p.created_at).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    const badge = p.kind==='checkin'
+      ? '<span class="post-badge">✅ tô bem</span>'
+      : (p.day?('<span class="post-badge day">Dia '+p.day+'</span>'):'');
+    return '<div class="post"><div class="post-top">'
+      +'<div class="post-av">'+esc(ini)+'</div>'
+      +'<div><div class="post-who">'+esc(p.author||'Alguém')+'</div><div class="post-meta">'+when+'</div></div>'
+      +badge+'</div>'
+      +(p.text?'<div class="post-txt">'+esc(p.text)+'</div>':'')
+      +(p.photo_url?'<img class="post-photo" src="'+p.photo_url+'" alt="">':'')
+      +'</div>';
+  }).join('');
+}
+
+// ---- composer ----
+let composerDay=1;
+function openComposer(day){
+  if(!requireLogin())return;
+  composerDay=day||tripDayNum()||1; if(composerDay<1)composerDay=1; if(composerDay>21)composerDay=21;
+  const sel=document.getElementById('cDay');
+  sel.innerHTML=days.map(d=>'<option value="'+d.d+'">Dia '+d.d+' · '+d.to.split(' · ')[0]+'</option>').join('');
+  sel.value=composerDay;
+  document.getElementById('cText').value='';
+  document.getElementById('cPhoto').value='';
+  document.getElementById('cPreview').innerHTML='';
+  document.getElementById('cStatus').textContent='';
+  document.getElementById('cScrim').classList.add('on');
+  document.getElementById('cSheet').classList.add('on');
+}
+function closeComposer(){ document.getElementById('cScrim').classList.remove('on'); document.getElementById('cSheet').classList.remove('on'); }
+function setupComposer(){
+  document.getElementById('openPost').addEventListener('click',()=>openComposer(tripDayNum()));
+  document.getElementById('cClose').addEventListener('click',closeComposer);
+  document.getElementById('cScrim').addEventListener('click',closeComposer);
+  const photo=document.getElementById('cPhoto');
+  photo.addEventListener('change',async()=>{ const f=photo.files[0]; const pv=document.getElementById('cPreview');
+    if(f){ pv.innerHTML='<img src="'+await fileToDataURL(f)+'">'; } else pv.innerHTML=''; });
+  document.getElementById('cSubmit').addEventListener('click',submitPost);
+}
+async function submitPost(){
+  const u=getUser(); if(!u){requireLogin();return;}
+  const st=document.getElementById('cStatus');
+  const text=document.getElementById('cText').value.trim();
+  const file=document.getElementById('cPhoto').files[0];
+  const day=+document.getElementById('cDay').value;
+  if(!text && !file){ st.className='c-status err'; st.textContent='Escreve um recado ou põe uma foto.'; return; }
+  st.className='c-status'; st.textContent='Enviando…';
+  try{
+    let photo_url=null; if(file) photo_url=await db.upload(file);
+    await db.add({day,author:u.name,text,kind:'post',photo_url});
+    st.className='c-status ok'; st.textContent='Publicado! 🎉';
+    setTimeout(()=>{ closeComposer(); renderFeed(); const dd=document.getElementById('dayDiary'); if(dd)loadDayDiary(day); },600);
+  }catch(e){ console.warn(e); st.className='c-status err'; st.textContent='Não deu pra enviar. Tenta de novo.'; }
+}
+
+// ---- diário por dia (dentro da folha do dia) ----
+async function loadDayDiary(n){
+  const box=document.getElementById('dayDiary'); if(!box)return;
+  const all=await db.list();
+  const mine=all.filter(p=>+p.day===+n);
+  const u=getUser();
+  const checked = u && mine.some(p=>p.kind==='checkin' && p.author===u.name);
+  let html='';
+  html+='<button class="post-btn ghost" style="margin-bottom:10px" '
+      + (checked?'disabled ':'') + 'onclick="doCheckin('+n+')">'
+      + (checked?'✅ Você marcou que chegou':'✅ Cheguei / tô bem neste dia')+'</button>';
+  if(!mine.length){ html+='<div class="feed-empty" style="padding:10px">Sem posts deste dia ainda.</div>'; }
+  else html+=mine.map(p=>{
+    const when=new Date(p.created_at).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    const b=p.kind==='checkin'?'<span class="post-badge">✅ tô bem</span>':'';
+    return '<div class="post" style="margin-bottom:10px"><div class="post-top"><div class="post-av">'+esc((p.author||'?').charAt(0).toUpperCase())+'</div><div><div class="post-who">'+esc(p.author)+'</div><div class="post-meta">'+when+'</div></div>'+b+'</div>'
+      +(p.text?'<div class="post-txt">'+esc(p.text)+'</div>':'')
+      +(p.photo_url?'<img class="post-photo" src="'+p.photo_url+'" alt="">':'')+'</div>';
+  }).join('');
+  box.innerHTML=html;
+}
+async function doCheckin(n){
+  const u=getUser(); if(!u){requireLogin();return;}
+  try{ await db.add({day:n,author:u.name,text:'',kind:'checkin',photo_url:null}); loadDayDiary(n); renderFeed(); }
+  catch(e){ console.warn(e); }
+}
+
+// ---- clima (Open-Meteo, sem chave) ----
+const WMO={0:['☀️','Céu limpo'],1:['🌤️','Poucas nuvens'],2:['⛅','Parcial'],3:['☁️','Nublado'],
+ 45:['🌫️','Neblina'],48:['🌫️','Neblina'],51:['🌦️','Garoa'],53:['🌦️','Garoa'],55:['🌧️','Garoa forte'],
+ 61:['🌧️','Chuva'],63:['🌧️','Chuva'],65:['🌧️','Chuva forte'],66:['🌧️','Chuva gelada'],67:['🌧️','Chuva gelada'],
+ 71:['🌨️','Neve'],73:['🌨️','Neve'],75:['❄️','Neve forte'],77:['❄️','Neve'],
+ 80:['🌦️','Pancadas'],81:['🌧️','Pancadas'],82:['⛈️','Pancadas fortes'],85:['🌨️','Neve'],86:['❄️','Neve'],
+ 95:['⛈️','Tempestade'],96:['⛈️','Tempestade'],99:['⛈️','Tempestade']};
+async function loadWeather(n){
+  const el=document.getElementById('dayWx'); if(!el)return;
+  const idx=dayRouteIdx[n]; const ll=routeCoords[idx]; const date=dayDate(n);
+  try{
+    const url='https://api.open-meteo.com/v1/forecast?latitude='+ll[0]+'&longitude='+ll[1]
+      +'&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max'
+      +'&timezone=auto&start_date='+date+'&end_date='+date;
+    const r=await fetch(url); const j=await r.json();
+    const d=j&&j.daily;
+    if(d && d.time && d.time.length){
+      const code=d.weathercode[0], w=WMO[code]||['🌡️','—'];
+      const tmax=Math.round(d.temperature_2m_max[0]), tmin=Math.round(d.temperature_2m_min[0]);
+      const prob=d.precipitation_probability_max? d.precipitation_probability_max[0]:null;
+      el.className='wx';
+      el.innerHTML='<span class="wxe">'+w[0]+'</span><div class="wxt"><b>'+tmax+'° / '+tmin+'°</b>'
+        +'<span>'+w[1]+(prob!=null?(' · '+prob+'% chuva'):'')+'</span></div>';
+    } else {
+      el.className='wx muted'; el.textContent='Previsão aparece quando faltar ~2 semanas pra data.';
+    }
+  }catch(e){ el.className='wx muted'; el.textContent='Não deu pra carregar a previsão agora.'; }
+}
+
+// ---- selos / conquistas ----
+const SELOS=[
+ {d:1,e:'🌊',n:'Cataratas'},{d:5,e:'🏔️',n:'Cruzou os Andes'},{d:7,e:'⛴️',n:'Entrou na Austral'},
+ {d:11,e:'💎',n:'Capillas de Mármol'},{d:13,e:'🧊',n:'Fim da Austral'},{d:18,e:'🛂',n:'De volta ao Brasil'},
+ {d:21,e:'🏁',n:'Expedição completa'}
+];
+function renderSelos(){
+  const el=document.getElementById('selos'); if(!el)return;
+  const cur=tripDayNum();
+  el.innerHTML=SELOS.map(s=>'<div class="selo'+(cur>=s.d?' on':'')+'"><div class="se">'+s.e+'</div><div class="sn">'+s.n+'</div></div>').join('');
+}
+function renderPlaylist(){
+  const el=document.getElementById('playlistCard'); if(!el)return;
+  if(!CONFIG.SPOTIFY){el.style.display='none';return;}
+  el.innerHTML='<iframe style="border-radius:16px" src="https://open.spotify.com/embed/playlist/'+CONFIG.SPOTIFY
+    +'?utm_source=generator" height="152" allow="encrypted-media" loading="lazy"></iframe>';
+}
+function setupMural(){ setupLogin(); setupComposer(); renderSelos(); renderPlaylist(); renderFeed(); }
+
+/* ============ MOTO NO MAPA (anda conforme os dias) ============ */
+// mapeia cada dia -> índice na routeCoords (0 = Limeira/saída)
+const dayRouteIdx={1:1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,10:10,11:10,12:11,13:11,14:12,15:13,16:14,17:15,18:16,19:17,20:18,21:19};
+const TRIP_START=new Date('2026-09-10T00:00:00-03:00');
+function tripDayNum(){ // <1 = ainda não largou; 1..21 durante; >21 = concluída
+  const now=new Date();
+  return Math.floor((now - TRIP_START)/864e5)+1;
+}
+let motoMarker=null, simRunning=false;
+function motoLL(dayNum){
+  if(dayNum<1) return routeCoords[0];
+  if(dayNum>21) return routeCoords[19];
+  return routeCoords[dayRouteIdx[dayNum]];
+}
+function ensureMoto(ll){
+  if(!motoMarker){
+    const icon=L.divIcon({className:'moto-wrap',html:'<div class="moto">🏍️</div>',iconSize:[38,38],iconAnchor:[19,19]});
+    motoMarker=L.marker(ll,{icon,zIndexOffset:1200}).addTo(_map);
+  } else motoMarker.setLatLng(ll);
+}
+function motoReal(){ if(_map){ ensureMoto(motoLL(tripDayNum())); updateMotoBar(); } }
+function updateMotoBar(){
+  const info=document.getElementById('mbInfo'), btn=document.getElementById('simBtn');
+  if(!info) return;
+  const n=tripDayNum();
+  if(n<1){
+    const faltam=1-n;
+    info.innerHTML='🏍️ <b>Largada em '+faltam+(faltam===1?' dia':' dias')+'</b> · 10/09';
+    btn.textContent='▶ Ver a rota';
+  } else if(n>21){
+    info.innerHTML='🏁 <b>Expedição concluída!</b> · 10.682 km';
+    btn.textContent='▶ Rever a viagem';
+  } else {
+    const d=dayByN(n);
+    info.innerHTML='<b>Dia '+n+' de 21</b> · '+(d?d.to.split(' · ')[0]:'');
+    btn.textContent='▶ Rever a viagem';
+  }
+}
+function simulate(){
+  if(simRunning||!_map) return; simRunning=true;
+  const info=document.getElementById('mbInfo');
+  const pts=routeCoords, stepsPerSeg=16; let seg=0, t=0;
+  ensureMoto(pts[0]);
+  const idxToDay={}; Object.keys(dayRouteIdx).forEach(dn=>{ const i=dayRouteIdx[dn]; if(!(i in idxToDay)) idxToDay[i]=+dn; });
+  (function tick(){
+    if(seg>=pts.length-1){ simRunning=false; motoReal(); return; }
+    const a=pts[seg], b=pts[seg+1], k=t/stepsPerSeg;
+    motoMarker.setLatLng([a[0]+(b[0]-a[0])*k, a[1]+(b[1]-a[1])*k]);
+    t++;
+    if(t>stepsPerSeg){ t=0; seg++; const dn=idxToDay[seg]; if(dn&&info){const dd=dayByN(dn); info.innerHTML='🏍️ <b>Dia '+dn+'</b> · '+(dd?dd.to.split(' · ')[0]:'');} }
+    setTimeout(()=>requestAnimationFrame(tick),26);
+  })();
+}
+function setupMoto(){
+  motoReal();
+  const btn=document.getElementById('simBtn');
+  if(btn) btn.addEventListener('click',simulate);
+  setInterval(motoReal,3600000);
+}
+
 /* ============ INIT ============ */
-buildMap(); buildTimeline(); buildChecklist(); buildAttn(); countdown();
+buildMap(); buildTimeline(); buildChecklist(); buildAttn(); countdown(); setupMoto(); setupMural();
 setInterval(countdown,30000);
 </script>
 </body>
