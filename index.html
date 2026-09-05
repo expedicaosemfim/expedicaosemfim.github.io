@@ -154,10 +154,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .bdg.austral{background:rgba(120,192,212,.14);color:var(--sky);border-color:rgba(120,192,212,.34);}
 
 /* ---------- Detail sheet ---------- */
-.scrim{position:fixed;inset:0;background:rgba(4,8,6,.6);z-index:50;opacity:0;pointer-events:none;
+.scrim{position:fixed;inset:0;background:rgba(4,8,6,.6);z-index:800;opacity:0;pointer-events:none;
   transition:opacity .25s;backdrop-filter:blur(2px);}
 .scrim.on{opacity:1;pointer-events:auto;}
-.sheet{position:fixed;left:0;right:0;bottom:0;z-index:51;max-width:560px;margin:0 auto;
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:820;max-width:560px;margin:0 auto;
   background:var(--bg2);border-radius:22px 22px 0 0;border-top:1px solid var(--line);
   transform:translateY(102%);transition:transform .32s cubic-bezier(.22,.9,.3,1);
   max-height:92dvh;display:flex;flex-direction:column;box-shadow:0 -18px 50px rgba(0,0,0,.6);}
@@ -248,6 +248,29 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .tip .te{font-size:18px;flex:none;}
 .credit{text-align:center;color:var(--ink-faint);font-size:11.5px;padding:8px 20px 20px;line-height:1.6;}
 
+/* ---------- Perfil ---------- */
+.prof-head{display:flex;flex-direction:column;align-items:center;text-align:center;padding:22px 16px 6px;}
+.prof-av{width:96px;height:96px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--amber),var(--amber-deep));
+  color:#20160b;font-family:'Oswald';font-weight:700;font-size:40px;display:flex;align-items:center;justify-content:center;
+  background-size:cover;background-position:center;border:2px solid var(--line);}
+.prof-av.has{color:transparent;}
+.prof-avbtn{margin-top:10px;background:var(--panel2);color:var(--sky);border:1px solid var(--line);
+  border-radius:20px;padding:7px 14px;font-size:12.5px;font-weight:600;}
+.prof-name{font-family:'Oswald';font-weight:700;font-size:22px;color:var(--ink);margin-top:12px;}
+.prof-km-wrap{width:100%;max-width:320px;margin-top:16px;}
+.prof-km-row{display:flex;gap:8px;}
+.prof-km-row .c-input{flex:1;}
+.prof-km-hint{font-size:11.5px;color:var(--ink-faint);margin-top:6px;text-align:center;}
+.albums{padding:6px 16px calc(20px + var(--safe-b));display:flex;flex-direction:column;gap:14px;}
+.album{background:var(--panel);border:1px solid var(--line-soft);border-radius:15px;padding:13px;}
+.album-h{font-family:'Oswald';font-weight:600;font-size:15px;color:var(--ink);display:flex;align-items:center;gap:6px;}
+.album-h span{margin-left:auto;font-size:11.5px;color:var(--ink-faint);font-weight:500;}
+.album-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:11px;}
+.thumb{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:#0c1510;}
+.thumb img,.thumb video{width:100%;height:100%;object-fit:cover;display:block;}
+.thumb.vid span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:22px;color:#fff;background:rgba(0,0,0,.28);text-shadow:0 2px 6px rgba(0,0,0,.6);}
+.album-empty{font-size:12.5px;color:var(--ink-faint);padding:10px 2px 2px;}
 /* ---------- Mural / Feed ---------- */
 .selos-wrap{padding:10px 16px 2px;}
 .selos-title{font-family:'Oswald';font-weight:600;font-size:12.5px;letter-spacing:1.5px;
@@ -350,12 +373,12 @@ select.c-input{appearance:none;}
 .reset-btn:active{background:var(--panel);}
 /* ---------- Bottom nav ---------- */
 .nav{position:fixed;left:0;right:0;bottom:0;z-index:40;max-width:560px;margin:0 auto;
-  display:grid;grid-template-columns:repeat(5,1fr);
-  padding:8px 6px calc(8px + var(--safe-b));
+  display:grid;grid-template-columns:repeat(6,1fr);
+  padding:8px 4px calc(8px + var(--safe-b));
   background:linear-gradient(0deg,var(--bg) 60%,rgba(12,19,16,.85));
   border-top:1px solid var(--line);backdrop-filter:blur(10px);}
 .nav button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;color:var(--ink-faint);
-  font-size:10px;font-weight:600;letter-spacing:.2px;border-radius:12px;transition:color .2s;}
+  font-size:9.5px;font-weight:600;letter-spacing:0;border-radius:12px;transition:color .2s;}
 .nav button svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.8;}
 .nav button.active{color:var(--amber);}
 .nav button.active svg{filter:drop-shadow(0 0 5px var(--amber-glow));}
@@ -427,7 +450,8 @@ select.c-input{appearance:none;}
 <section id="view-info" class="view">
   <div class="info-hero">
     <svg class="bigcrest" viewBox="0 0 100 100" id="crestBig"></svg>
-    <div class="wordmark" style="font-size:34px;letter-spacing:2px;color:var(--ink)">SEM FIM</div>
+    <div style="font-family:'Bebas Neue';color:var(--sand);font-size:17px;letter-spacing:5px;line-height:1">EXPEDIÇÃO</div>
+    <div class="wordmark" style="font-size:34px;letter-spacing:2px;color:var(--ink);line-height:1">SEM FIM</div>
     <div class="tagline">BRASIL · ARGENTINA · CHILE · PARAGUAI</div>
     <div class="desc">Uma volta de moto pela Patagônia e pela Carretera Austral, saindo e voltando pra casa em Limeira. 21 dias, mais de dez mil quilômetros, quatro balsas e uma cordilheira inteira.</div>
     <div class="cd" id="countdown"></div>
@@ -458,6 +482,31 @@ select.c-input{appearance:none;}
   </div>
 
   <div class="credit">Feito com carinho para a Expedição Sem Fim 🧭<br>Boa viagem e voltem inteiros.</div>
+</section>
+
+<!-- ===== PERFIL ===== -->
+<section id="view-perfil" class="view">
+  <div class="prof-head">
+    <div class="prof-av" id="profAv">?</div>
+    <input type="file" id="profAvInput" accept="image/*" style="display:none">
+    <button class="prof-avbtn" id="profAvBtn">Trocar foto</button>
+    <div class="prof-name" id="profName">—</div>
+    <div class="prof-km-wrap">
+      <label class="c-lbl" style="margin:0 0 4px">Quilômetros rodados</label>
+      <div class="prof-km-row">
+        <input type="number" id="profKm" class="c-input" placeholder="0" inputmode="numeric" style="text-align:center">
+        <button class="post-btn" id="profKmSave" style="width:auto;padding:12px 16px">Salvar</button>
+      </div>
+      <div class="prof-km-hint" id="profKmHint"></div>
+    </div>
+  </div>
+  <div class="section" style="padding-bottom:6px">
+    <div class="eyebrow">Minhas viagens</div>
+    <div class="h-lead">Álbuns por país</div>
+    <div class="sub">As fotos que você posta no mural entram na pasta do país automaticamente.</div>
+  </div>
+  <div id="albums" class="albums"></div>
+  <div style="height:calc(30px + var(--safe-b))"></div>
 </section>
 
 <!-- ===== MURAL ===== -->
@@ -494,8 +543,8 @@ select.c-input{appearance:none;}
     <select id="cDay" class="c-input"></select>
     <label class="c-lbl">Recado (opcional)</label>
     <textarea id="cText" class="c-input" rows="3" placeholder="Conta como foi o dia…"></textarea>
-    <label class="c-lbl">Foto (opcional)</label>
-    <input type="file" id="cPhoto" accept="image/*" class="c-input">
+    <label class="c-lbl">Foto ou vídeo (opcional)</label>
+    <input type="file" id="cPhoto" accept="image/*,video/*" class="c-input">
     <div id="cPreview" class="c-preview"></div>
     <button class="post-btn" id="cSubmit" style="width:100%;margin-top:14px">Publicar</button>
     <div id="cStatus" class="c-status"></div>
@@ -506,7 +555,8 @@ select.c-input{appearance:none;}
 <div class="login-gate" id="loginGate">
   <div class="login-card">
     <svg class="bigcrest" viewBox="0 0 100 100" id="crestLogin" style="width:64px;height:64px;margin:0 auto 6px"></svg>
-    <div class="wordmark" style="font-size:26px;text-align:center;color:var(--ink)">SEM FIM</div>
+    <div style="text-align:center;font-family:'Bebas Neue';color:var(--sand);font-size:15px;letter-spacing:4px;line-height:1;margin-bottom:-2px">EXPEDIÇÃO</div>
+    <div class="wordmark" style="font-size:30px;text-align:center;color:var(--ink);line-height:1">SEM FIM</div>
     <div style="text-align:center;color:var(--ink-dim);font-size:13px;margin:6px 0 16px">Entre com seu telefone e a senha do grupo</div>
     <label class="c-lbl">Seu telefone</label>
     <input type="tel" id="lgPhone" class="c-input" placeholder="Ex: (19) 99888-7777" inputmode="tel">
@@ -534,6 +584,8 @@ select.c-input{appearance:none;}
     <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="20" cy="18" r="1.5" fill="currentColor" stroke="none"/></svg>Roteiro</button>
   <button data-v="mural">
     <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.6"/><path d="m5 17 5-4 4 3 2-2 3 3"/></svg>Mural</button>
+  <button data-v="perfil">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg>Perfil</button>
   <button data-v="check">
     <svg viewBox="0 0 24 24"><path d="M4 5h16v16H4z"/><path d="m8 12 3 3 5-6"/></svg>Checklist</button>
   <button data-v="info">
@@ -1032,6 +1084,7 @@ function switchView(v){
   window.scrollTo(0,0);
   if(v==='mapa' && _map){ setTimeout(()=>_map.invalidateSize(),80); }
   if(v==='mural'){ refreshMural(); }
+  if(v==='perfil'){ renderProfile(); }
 }
 document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.v)));
 
@@ -1173,9 +1226,9 @@ let POSTS=[], REACTS=[], COMS=[], POSTBYID={};
 const REACTIONS=['❤️','🔥','👏','😂','😮'];
 
 async function refreshMural(){
-  POSTS=await db.posts(); REACTS=await db.reactions(); COMS=await db.comments();
+  POSTS=await db.posts(); REACTS=await db.reactions(); COMS=await db.comments(); await loadProfiles();
   POSTBYID={}; POSTS.forEach(p=>POSTBYID[String(p.id)]=p);
-  renderFeed(); renderSelos(); placeMoto(); renderAdmin();
+  renderFeed(); renderSelos(); placeMoto(); renderAdmin(); renderProfile();
   if(openDayNum) loadDayDiary(openDayNum);
 }
 
@@ -1207,7 +1260,9 @@ function postHtml(p,compact){
     +'<div style="min-width:0"><div class="post-who">'+esc(p.author||'Alguém')+'</div><div class="post-meta">'+when+'</div></div>'
     +badge+del+'</div>'
     +(p.text?'<div class="post-txt">'+esc(p.text)+'</div>':'')
-    +(p.photo_url?'<img class="post-photo" loading="lazy" decoding="async" src="'+p.photo_url+'" alt="">':'')
+    +(p.photo_url?( /\.(mp4|mov|webm|m4v|ogg)(\?|$)/i.test(p.photo_url)
+        ? '<video class="post-photo" src="'+p.photo_url+'" controls playsinline preload="metadata"></video>'
+        : '<img class="post-photo" loading="lazy" decoding="async" src="'+p.photo_url+'" alt="">'):'')
     +'<div class="rbar">'+rbar+'</div>'
     +cbox
     +'</div>';
@@ -1220,7 +1275,7 @@ function renderFeed(){
   if(sub) sub.textContent = CLOUD
     ? (u? ('Você está como '+u.name+' · aparece pra todo o grupo') : 'Entre pra postar — aparece pra todo o grupo')
     : 'Modo local (sem nuvem): posts ficam só neste aparelho.';
-  const feedPosts=POSTS.filter(p=>p.kind!=='largou' && p.kind!=='chegada');
+  const feedPosts=POSTS.filter(p=>p.kind==='post');
   if(!feedPosts.length){ feed.innerHTML='<div class="feed-empty">Ainda sem posts.<br>Seja o primeiro a mandar uma foto da estrada! 🏍️</div>'; return; }
   feed.innerHTML=feedPosts.map(p=>postHtml(p,false)).join('');
 }
@@ -1246,8 +1301,14 @@ function setupComposer(){
   document.getElementById('cClose').addEventListener('click',closeComposer);
   document.getElementById('cScrim').addEventListener('click',closeComposer);
   const photo=document.getElementById('cPhoto');
-  photo.addEventListener('change',async()=>{ const f=photo.files[0]; const pv=document.getElementById('cPreview');
-    if(f){ pv.innerHTML='<img src="'+await fileToDataURL(f)+'">'; } else pv.innerHTML=''; });
+  photo.addEventListener('change',()=>{ const f=photo.files[0]; const pv=document.getElementById('cPreview');
+    if(!f){ pv.innerHTML=''; return; }
+    if(f.size>60*1024*1024){ pv.innerHTML='<div class="c-status err">Arquivo muito grande (máx. 60MB). Escolha um vídeo mais curto.</div>'; photo.value=''; return; }
+    const url=URL.createObjectURL(f);
+    pv.innerHTML = /^video\//.test(f.type)
+      ? '<video src="'+url+'" controls playsinline style="width:100%;border-radius:12px;margin-top:10px"></video>'
+      : '<img src="'+url+'" style="margin-top:10px">';
+  });
   document.getElementById('cSubmit').addEventListener('click',submitPost);
 }
 async function submitPost(){
@@ -1282,7 +1343,7 @@ function loadDayDiary(n){
   let html='';
   html+='<button class="post-btn ghost ckbtn'+(checked?' done':'')+'" data-day="'+n+'" style="margin-bottom:12px">'
       + (checked?'✅ Você marcou que chegou — toque pra desmarcar':'✅ Marcar: cheguei / tô bem neste dia')+'</button>';
-  const shown=mine.filter(p=>p.kind!=='checkin' || true); // mostra tudo, inclusive check-ins
+  const shown=mine.filter(p=>p.kind==='post');
   if(!shown.length){ html+='<div class="feed-empty" style="padding:8px">Sem posts deste dia ainda.</div>'; }
   else html+=shown.map(p=>postHtml(p,true)).join('');
   box.innerHTML=html;
@@ -1400,7 +1461,79 @@ function setupMural(){
   setupLogin(); setupComposer(); renderPlaylist();
   document.addEventListener('click',onMuralClick);
   document.addEventListener('keydown',onMuralKey);
+  setupProfile();
   refreshMural();
+}
+
+/* ============ PERFIL ============ */
+// país de cada dia (pra montar os álbuns)
+const dayCountry={1:'Brasil',2:'Argentina',3:'Argentina',4:'Argentina',5:'Chile',6:'Chile',7:'Chile',
+ 8:'Chile',9:'Chile',10:'Chile',11:'Chile',12:'Chile',13:'Chile',14:'Chile',15:'Argentina',16:'Argentina',
+ 17:'Argentina',18:'Brasil',19:'Brasil',20:'Brasil',21:'Brasil'};
+const COUNTRY_FLAG={Brasil:'🇧🇷',Argentina:'🇦🇷',Chile:'🇨🇱',Paraguai:'🇵🇾'};
+let PROFILES={};
+async function loadProfiles(){
+  if(CLOUD){ const {data,error}=await sb.from('profiles').select('*'); if(!error&&data){ PROFILES={}; data.forEach(p=>PROFILES[normPhone(p.phone)]=p); } }
+  else { try{PROFILES=JSON.parse(localStorage.getItem('esf_profiles'))||{};}catch(e){PROFILES={};} }
+}
+async function saveProfile(patch){
+  const u=getUser(); if(!u)return;
+  const ph=normPhone(u.phone);
+  const cur=PROFILES[ph]||{phone:ph,name:u.name};
+  const row=Object.assign({},cur,patch,{phone:ph,name:u.name});
+  if(CLOUD){ const {error}=await sb.from('profiles').upsert(row,{onConflict:'phone'}); if(error)throw error; }
+  else { PROFILES[ph]=row; localStorage.setItem('esf_profiles',JSON.stringify(PROFILES)); }
+  PROFILES[ph]=row;
+}
+function setupProfile(){
+  const btn=document.getElementById('profAvBtn'), inp=document.getElementById('profAvInput');
+  if(btn&&inp){
+    btn.addEventListener('click',()=>inp.click());
+    inp.addEventListener('change',async()=>{
+      const f=inp.files[0]; if(!f)return;
+      const av=document.getElementById('profAv'); av.textContent='…';
+      try{ const small=await compressImage(f,600,0.85); const url=await db.upload(small);
+        await saveProfile({avatar_url:url}); renderProfile(); }
+      catch(e){ console.warn(e); renderProfile(); }
+    });
+  }
+  const ks=document.getElementById('profKmSave');
+  if(ks) ks.addEventListener('click',async()=>{
+    const v=parseInt(document.getElementById('profKm').value,10)||0;
+    ks.textContent='…'; try{ await saveProfile({km:v}); }catch(e){console.warn(e);}
+    ks.textContent='Salvo ✓'; setTimeout(()=>ks.textContent='Salvar',1200); renderProfile();
+  });
+}
+function renderProfile(){
+  const u=getUser();
+  const nameEl=document.getElementById('profName'); if(!nameEl)return;
+  if(!u){ nameEl.textContent='Faça login para ver seu perfil'; document.getElementById('albums').innerHTML=''; return; }
+  const prof=PROFILES[normPhone(u.phone)]||{};
+  nameEl.textContent=u.name;
+  const av=document.getElementById('profAv');
+  if(prof.avatar_url){ av.style.backgroundImage='url('+prof.avatar_url+')'; av.classList.add('has'); av.textContent=''; }
+  else { av.style.backgroundImage=''; av.classList.remove('has'); av.textContent=(u.name||'?').charAt(0).toUpperCase(); }
+  const km=document.getElementById('profKm'); if(km && document.activeElement!==km) km.value=prof.km||'';
+  // sugestão de km com base no progresso
+  const d=computeTripDay(); const hint=document.getElementById('profKmHint');
+  if(hint){ if(d>=1){ const dd=dayByN(d>21?21:d); hint.textContent='Sugestão pelo progresso: '+(dd?dd.cum.toLocaleString('pt-BR'):'—')+' km'; } else hint.textContent=''; }
+  // álbuns por país (fotos que EU postei)
+  const mine=POSTS.filter(p=>p.kind==='post'&&p.photo_url&&p.author===u.name);
+  const box=document.getElementById('albums');
+  const order=['Brasil','Argentina','Chile'];
+  let html='';
+  order.forEach(c=>{
+    const items=mine.filter(p=>dayCountry[+p.day]===c);
+    html+='<div class="album"><div class="album-h">'+COUNTRY_FLAG[c]+' '+c+' <span>'+items.length+' '+(items.length===1?'foto':'fotos')+'</span></div>';
+    if(items.length){ html+='<div class="album-grid">'+items.map(p=>{
+      const vid=/\.(mp4|mov|webm|m4v|ogg)(\?|$)/i.test(p.photo_url);
+      return vid? '<div class="thumb vid"><video src="'+p.photo_url+'#t=0.1" preload="metadata"></video><span>▶</span></div>'
+                : '<div class="thumb"><img loading="lazy" src="'+p.photo_url+'" alt=""></div>';
+    }).join('')+'</div>'; }
+    else html+='<div class="album-empty">Sem fotos ainda.</div>';
+    html+='</div>';
+  });
+  box.innerHTML=html;
 }
 
 /* ============ MOTO NO MAPA ============ */
