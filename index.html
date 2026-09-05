@@ -281,7 +281,41 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   background:rgba(111,206,143,.13);color:var(--ok);border:1px solid rgba(111,206,143,.3);}
 .post-badge.day{background:rgba(242,166,60,.13);color:var(--amber);border-color:rgba(242,166,60,.3);}
 .post-txt{padding:2px 14px 12px;font-size:14.5px;line-height:1.5;color:var(--ink);}
-.post img.post-photo{width:100%;display:block;max-height:420px;object-fit:cover;}
+.post img.post-photo{width:100%;display:block;height:auto;background:#0c1510;}
+.post-top .pdel{margin-left:8px;background:none;font-size:15px;opacity:.7;padding:2px 4px;}
+.post-top .pdel:active{opacity:1;}
+.rbar{display:flex;gap:6px;flex-wrap:wrap;padding:10px 12px 4px;}
+.rbtn{display:inline-flex;align-items:center;gap:3px;background:var(--panel2);border:1px solid var(--line);
+  border-radius:20px;padding:5px 10px;font-size:15px;line-height:1;color:var(--ink);}
+.rbtn i{font-style:normal;font-size:12px;font-weight:700;color:var(--ink-dim);}
+.rbtn.on{background:rgba(242,166,60,.16);border-color:rgba(242,166,60,.45);}
+.rbtn.on i{color:var(--sand);}
+.cmts{padding:6px 12px 12px;}
+.cmt{font-size:13.5px;color:var(--ink);line-height:1.45;padding:3px 0;}
+.cmt b{color:var(--sand);font-family:'Oswald';font-weight:600;margin-right:5px;}
+.cadd{display:flex;gap:8px;margin-top:8px;}
+.cin{flex:1;min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:20px;
+  padding:9px 13px;color:var(--ink);font-size:14px;font-family:inherit;outline:none;}
+.cin:focus{border-color:var(--amber);}
+.csend{flex:none;background:var(--panel2);color:var(--sky);border:1px solid var(--line);
+  border-radius:20px;padding:9px 14px;font-size:13px;font-weight:700;}
+.ckbtn.done{background:rgba(111,206,143,.14);color:var(--ok);border-color:rgba(111,206,143,.4);}
+/* stamps */
+.selo{width:112px;padding:12px 6px 10px;}
+.stamp-svg{width:80px;height:80px;display:block;margin:0 auto;}
+.selo .sn{margin-top:4px;}
+/* pin offsets (garante que pares sobrepostos apareçam sem zoom) */
+.mpin.o-nw{transform:translate(-15px,-15px);}
+.mpin.o-se{transform:translate(15px,15px);}
+.mpin.start{width:34px;height:34px;font-size:16px;}
+.mpin.finish{width:34px;height:34px;}
+/* recado saída/chegada + guestbook */
+.big-scene{min-height:118px;}
+.recado{background:var(--panel);border:1px solid var(--line-soft);border-radius:15px;padding:15px 16px;margin-top:12px;}
+.recado p{font-size:15px;line-height:1.6;color:var(--ink);margin:0 0 8px;}
+.recado p:last-child{margin-bottom:0;}
+.gmsg{background:var(--panel);border:1px solid var(--line-soft);border-radius:13px;padding:11px 13px;margin-bottom:9px;font-size:14px;line-height:1.5;color:var(--ink);}
+.gmsg b{display:block;font-family:'Oswald';font-weight:600;color:var(--sand);font-size:13px;margin-bottom:3px;}
 
 /* ---------- Composer / inputs ---------- */
 .c-lbl{display:block;font-size:12px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:1px;
@@ -630,28 +664,28 @@ const days = [
 // paradas (lat, lng) — número = dia de chegada
 // coords levemente ajustadas onde os pontos se sobrepõem, pra dar pra ver sem zoom
 const stops = [
- {lbl:'▶',  ll:[-22.44,-47.52], day:1, start:true},          // SAÍDA · Limeira (Dia 1)
- {lbl:'1',  ll:[-25.5163,-54.5854], day:1},                   // Foz do Iguaçu
- {lbl:'2',  ll:[-29.66,-57.16], day:2},                       // Paso de los Libres (lado AR)
- {lbl:'3',  ll:[-31.8680,-62.7200], day:3},                   // Las Varillas
- {lbl:'4',  ll:[-32.8908,-68.8272], day:4},                   // Mendoza
- {lbl:'5',  ll:[-34.9828,-71.2394], day:5},                   // Curicó
- {lbl:'6',  ll:[-40.5738,-73.1336], day:6},                   // Osorno
- {lbl:'7',  ll:[-41.9497,-72.4394], day:7},                   // Hornopirén
- {lbl:'8',  ll:[-42.9153,-72.7080], day:8},                   // Chaitén
- {lbl:'9',  ll:[-45.5752,-72.0662], day:9},                   // Coyhaique
- {lbl:'10', ll:[-46.6260,-72.6690], day:10},                  // Pto Río Tranquilo
- {lbl:'11', ll:[-46.72,-72.60],  day:11, passeio:true},       // Capillas de Mármol (passeio)
- {lbl:'12', ll:[-48.4712,-72.5606], day:12},                  // Villa O'Higgins
- {lbl:'13', ll:[-48.58,-72.66],  day:13, passeio:true},       // Fim da Austral (passeio)
- {lbl:'14', ll:[-46.5417,-71.7236], day:14},                  // Chile Chico
- {lbl:'15', ll:[-42.9110,-71.3190], day:15},                  // Esquel
- {lbl:'16', ll:[-38.9516,-68.0591], day:16},                  // Neuquén
- {lbl:'17', ll:[-35.6208,-61.3676], day:17},                  // Carlos Casares
- {lbl:'18', ll:[-29.84,-57.02], day:18},                      // Uruguaiana (lado BR)
- {lbl:'19', ll:[-28.2620,-52.4066], day:19},                  // Passo Fundo
- {lbl:'20', ll:[-25.0994,-50.1583], day:20},                  // Ponta Grossa
- {lbl:'🏁', ll:[-22.66,-47.30], day:21, finish:true},         // CHEGADA · Limeira (Dia 21)
+ {lbl:'▶',  ll:[-22.10,-48.00], day:1, start:true, off:'o-nw'},        // SAÍDA · Limeira (afastada NO)
+ {lbl:'1',  ll:[-25.5163,-54.5854], day:1},                             // Foz do Iguaçu
+ {lbl:'2',  ll:[-29.50,-57.55], day:2, off:'o-nw'},                     // Paso de los Libres (AR)
+ {lbl:'3',  ll:[-31.8680,-62.7200], day:3},                             // Las Varillas
+ {lbl:'4',  ll:[-32.8908,-68.8272], day:4},                             // Mendoza
+ {lbl:'5',  ll:[-34.9828,-71.2394], day:5},                             // Curicó
+ {lbl:'6',  ll:[-40.5738,-73.1336], day:6},                             // Osorno
+ {lbl:'7',  ll:[-41.9497,-72.4394], day:7},                             // Hornopirén
+ {lbl:'8',  ll:[-42.9153,-72.7080], day:8},                             // Chaitén
+ {lbl:'9',  ll:[-45.5752,-72.0662], day:9},                             // Coyhaique
+ {lbl:'10', ll:[-46.62,-72.85], day:10, off:'o-nw'},                    // Pto Río Tranquilo
+ {lbl:'11', ll:[-46.95,-72.35], day:11, passeio:true, off:'o-se'},      // Capillas de Mármol (passeio)
+ {lbl:'12', ll:[-48.30,-72.90], day:12, off:'o-nw'},                    // Villa O'Higgins
+ {lbl:'13', ll:[-48.72,-72.30], day:13, passeio:true, off:'o-se'},      // Fim da Austral (passeio)
+ {lbl:'14', ll:[-46.5417,-71.7236], day:14},                            // Chile Chico
+ {lbl:'15', ll:[-42.9110,-71.3190], day:15},                            // Esquel
+ {lbl:'16', ll:[-38.9516,-68.0591], day:16},                            // Neuquén
+ {lbl:'17', ll:[-35.6208,-61.3676], day:17},                            // Carlos Casares
+ {lbl:'18', ll:[-30.10,-56.55], day:18, off:'o-se'},                    // Uruguaiana (BR)
+ {lbl:'19', ll:[-28.2620,-52.4066], day:19},                            // Passo Fundo
+ {lbl:'20', ll:[-25.0994,-50.1583], day:20},                            // Ponta Grossa
+ {lbl:'🏁', ll:[-23.05,-46.85], day:21, finish:true, off:'o-se'},       // CHEGADA · Limeira (afastada SE)
 ];
 // rota na ordem de viagem (fecha o loop de volta a Limeira)
 const routeCoords = [
@@ -684,7 +718,7 @@ const dayPhotos = {
  16: [["Estepa patagónica","es","Estepe patagônica"]],
  17: [["Pampa","es","Pampa infinita"]],
  18: [["Río Uruguay","es","Rio Uruguai · volta ao Brasil"]],
- 19: [["Rio Grande do Sul","pt","Campos do Sul"]],
+ 19: [["Serra Gaúcha","pt","Serra Gaúcha"]],
  20: [["Parque Estadual de Vila Velha","pt","Vila Velha"]],
  21: [["Limeira","pt","Chegada em casa · Limeira"]],
 };
@@ -703,11 +737,20 @@ function wikiFetch(title,lang){
     wikiCache[key]=src; return src;
   }).catch(()=>{wikiCache[key]=null; return null;});
 }
-// tenta o idioma pedido e, se não achar, tenta es/pt/en
+// tenta o idioma pedido e, se não achar, tenta es/pt/en (pageimages + REST summary)
+function wikiRest(title,lang){
+  const key='R'+lang+'|'+title;
+  if(key in wikiCache) return Promise.resolve(wikiCache[key]);
+  const url='https://'+lang+'.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent(title.replace(/ /g,'_'));
+  return fetch(url).then(r=>r.ok?r.json():null).then(j=>{
+    let src=(j&&(j.originalimage&&j.originalimage.source||j.thumbnail&&j.thumbnail.source))||null;
+    wikiCache[key]=src; return src;
+  }).catch(()=>{wikiCache[key]=null;return null;});
+}
 async function wikiImg(title,lang){
   lang=lang||'es';
   const langs=[lang,'es','pt','en'].filter((v,i,a)=>a.indexOf(v)===i);
-  for(const l of langs){ const src=await wikiFetch(title,l); if(src) return src; }
+  for(const l of langs){ const a=await wikiFetch(title,l); if(a) return a; const b=await wikiRest(title,l); if(b) return b; }
   return null;
 }
 function galleryHtml(photos,sc,emo){
@@ -758,10 +801,11 @@ function buildMap(){
   stops.forEach(s=>{
     let cls='mpin';
     if(s.start)cls+=' start'; else if(s.finish)cls+=' finish'; else if(s.passeio)cls+=' passeio';
+    if(s.off)cls+=' '+s.off;
     const html='<div class="'+cls+'">'+s.lbl+'</div>';
     const icon=L.divIcon({className:'mpin-wrap',html,iconSize:[29,29],iconAnchor:[15,15]});
     L.marker(s.ll,{icon,zIndexOffset:(s.start||s.finish)?500:0}).addTo(map)
-      .on('click',()=>openDay(s.day));
+      .on('click',()=>{ if(s.start)openSaida(); else if(s.finish)openChegada(); else openDay(s.day); });
   });
 
   map.fitBounds(route.getBounds(),{padding:[26,26]});
@@ -771,8 +815,62 @@ function buildMap(){
 const scrim=document.getElementById('scrim'), sheet=document.getElementById('sheet'), sheetBody=document.getElementById('sheetBody');
 function dayByN(n){return days.find(x=>x.d===n);}
 function badgeHtml(b){const cls=b[1]?('bdg '+b[1]):'bdg';return `<span class="${cls}">${b[0]}</span>`;}
+let openDayNum=null;
+function openSheet(){ scrim.classList.add('on'); sheet.classList.add('on'); document.getElementById('sheetBody').scrollTop=0; }
+function openSaida(){
+  openDayNum=null;
+  const mh=document.getElementById('mapHint'); if(mh)mh.classList.add('hide');
+  sheetBody.innerHTML=`
+    <div class="scene big-scene" style="background:linear-gradient(150deg,#6fae6f,#2f6d3a)">
+      <span class="daytag">SAÍDA · LIMEIRA-SP · 10/09</span>
+      <span class="place" style="font-size:26px">Boa viagem! 🏍️</span>
+    </div>
+    <div class="recado">
+      <p>É hoje que a estrada começa. Que a expedição de vocês seja leve, o tempo firme e a moto sempre respondendo.</p>
+      <p>Cuidem uns dos outros, curtam cada paisagem e voltem com a memória cheia. <b>A liberdade não tem fim.</b></p>
+      <p style="color:var(--ink-faint);font-size:13px;margin-top:10px">21 dias · 10.682 km · Brasil, Argentina, Chile e Paraguai</p>
+    </div>
+    <button class="post-btn" id="largarBtn2" style="margin-top:16px">🏍️ Largar agora — começar a contagem</button>
+    <div style="height:10px"></div>`;
+  const lb=document.getElementById('largarBtn2');
+  if(lb) lb.addEventListener('click',()=>{ doLargar(); closeSheet(); });
+  openSheet();
+}
+function openChegada(){
+  openDayNum=null;
+  const mh=document.getElementById('mapHint'); if(mh)mh.classList.add('hide');
+  const msgs=POSTS.filter(p=>p.kind==='chegada').sort((a,b)=>a.created_at.localeCompare(b.created_at));
+  const list = msgs.length
+    ? msgs.map(m=>'<div class="gmsg"><b>'+esc(m.author)+'</b>'+esc(m.text)+'</div>').join('')
+    : '<div class="feed-empty" style="padding:8px">Ainda sem recados. Deixe o primeiro! ✍️</div>';
+  sheetBody.innerHTML=`
+    <div class="scene big-scene" style="background:linear-gradient(150deg,#f2a63c,#b5641a)">
+      <span class="daytag">CHEGADA · LIMEIRA-SP · 30/09</span>
+      <span class="place" style="font-size:26px">Chegaram! 🏁</span>
+    </div>
+    <div class="recado">
+      <p>10.682 km depois, de volta pra casa. Vocês cruzaram os Andes, encararam a Carretera Austral e escreveram uma história e tanto sobre duas rodas.</p>
+      <p><b>Que orgulho dessa turma.</b> 🧡</p>
+    </div>
+    <h2>✍️ Recado da galera</h2>
+    <div id="guest">${list}</div>
+    <div class="cadd" style="margin-top:10px">
+      <input id="guestIn" class="c-input" placeholder="Deixe uma mensagem pro grupo…" maxlength="240">
+      <button class="post-btn" id="guestSend" style="width:auto;padding:13px 16px">Enviar</button>
+    </div>
+    <div style="height:10px"></div>`;
+  const gs=document.getElementById('guestSend');
+  if(gs) gs.addEventListener('click',async()=>{
+    const u=getUser(); if(!u){requireLogin();return;}
+    const inp=document.getElementById('guestIn'); const t=inp.value.trim(); if(!t)return;
+    try{ await db.add({day:99,author:u.name,text:t,kind:'chegada',photo_url:null}); inp.value=''; await refreshMural(); openChegada(); }
+    catch(e){ console.warn(e); }
+  });
+  openSheet();
+}
 function openDay(n, finishN){
   const d=dayByN(n); if(!d)return;
+  openDayNum=n;
   const mh=document.getElementById('mapHint'); if(mh)mh.classList.add('hide');
   const grad=`linear-gradient(150deg,${d.sc[0]},${d.sc[1]})`;
   const kmTxt = d.km==='—' ? '—' : d.km.toLocaleString('pt-BR');
@@ -921,6 +1019,7 @@ function switchView(v){
   document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.v===v));
   window.scrollTo(0,0);
   if(v==='mapa' && _map){ setTimeout(()=>_map.invalidateSize(),80); }
+  if(v==='mural'){ refreshMural(); }
 }
 document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.v)));
 
@@ -937,22 +1036,51 @@ function esc(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>'
 function dayDate(n){ const dd=9+n; return '2026-09-'+String(dd).padStart(2,'0'); } // dia1 = 10/09
 
 // camada de dados (nuvem OU local)
-const LKEY='esf_mural_v1';
-function localPosts(){ try{return JSON.parse(localStorage.getItem(LKEY))||[];}catch(e){return [];} }
-function saveLocal(a){ try{localStorage.setItem(LKEY,JSON.stringify(a));}catch(e){} }
+const LKEY='esf_mural_v1', RKEY='esf_react_v1', CKEY='esf_com_v1';
+function larr(k){ try{return JSON.parse(localStorage.getItem(k))||[];}catch(e){return [];} }
+function lsave(k,a){ try{localStorage.setItem(k,JSON.stringify(a));}catch(e){} }
 const db={
-  async list(){
+  async posts(){
     if(CLOUD){ const {data,error}=await sb.from('posts').select('*').order('created_at',{ascending:false});
       if(error){console.warn(error);return [];} return data||[]; }
-    return localPosts().sort((a,b)=>b.created_at.localeCompare(a.created_at));
+    return larr(LKEY).sort((a,b)=>b.created_at.localeCompare(a.created_at));
+  },
+  async reactions(){
+    if(CLOUD){ const {data,error}=await sb.from('reactions').select('*'); if(error){console.warn(error);return[];} return data||[]; }
+    return larr(RKEY);
+  },
+  async comments(){
+    if(CLOUD){ const {data,error}=await sb.from('comments').select('*').order('created_at',{ascending:true}); if(error){console.warn(error);return[];} return data||[]; }
+    return larr(CKEY).sort((a,b)=>a.created_at.localeCompare(b.created_at));
   },
   async add(p){
     p.created_at=new Date().toISOString();
-    if(CLOUD){ const {error}=await sb.from('posts').insert(p); if(error)throw error; return; }
-    const a=localPosts(); p.id='l'+Date.now(); a.push(p); saveLocal(a);
+    if(CLOUD){ const {data,error}=await sb.from('posts').insert(p).select(); if(error)throw error; return data&&data[0]; }
+    const a=larr(LKEY); p.id='l'+Date.now()+Math.floor(Math.random()*999); a.push(p); lsave(LKEY,a); return p;
+  },
+  async del(id){
+    if(CLOUD){ const {error}=await sb.from('posts').delete().eq('id',id); if(error)throw error; return; }
+    lsave(LKEY, larr(LKEY).filter(p=>String(p.id)!==String(id)));
+    lsave(RKEY, larr(RKEY).filter(r=>String(r.post_id)!==String(id)));
+    lsave(CKEY, larr(CKEY).filter(c=>String(c.post_id)!==String(id)));
+  },
+  async react(post_id,author,emoji,has){
+    if(CLOUD){
+      if(has){ const {error}=await sb.from('reactions').delete().match({post_id,author,emoji}); if(error)throw error; }
+      else { const {error}=await sb.from('reactions').insert({post_id,author,emoji}); if(error)throw error; }
+      return;
+    }
+    let a=larr(RKEY);
+    if(has) a=a.filter(r=>!(String(r.post_id)===String(post_id)&&r.author===author&&r.emoji===emoji));
+    else a.push({id:'r'+Date.now(),post_id,author,emoji,created_at:new Date().toISOString()});
+    lsave(RKEY,a);
+  },
+  async comment(post_id,author,text){
+    if(CLOUD){ const {error}=await sb.from('comments').insert({post_id,author,text}); if(error)throw error; return; }
+    const a=larr(CKEY); a.push({id:'c'+Date.now(),post_id,author,text,created_at:new Date().toISOString()}); lsave(CKEY,a);
   },
   async upload(file){
-    if(!CLOUD) return await fileToDataURL(file); // local: guarda a própria imagem
+    if(!CLOUD) return await fileToDataURL(file);
     const path=Date.now()+'_'+file.name.replace(/[^\w.\-]/g,'_');
     const {error}=await sb.storage.from(CONFIG.BUCKET).upload(path,file,{upsert:false});
     if(error)throw error;
@@ -973,41 +1101,71 @@ function setupLogin(){
     const err=document.getElementById('lgErr');
     if(!name){err.className='c-status err';err.textContent='Escreve seu nome 🙂';return;}
     if(pin!==CONFIG.GROUP_PIN){err.className='c-status err';err.textContent='Senha do grupo incorreta.';return;}
-    setUser({name}); gate.classList.remove('on'); renderFeed();
+    setUser({name}); gate.classList.remove('on'); refreshMural(); if(openDayNum)loadDayDiary(openDayNum);
   });
   document.getElementById('lgSkip').addEventListener('click',()=>gate.classList.remove('on'));
 }
 
-// ---- feed / mural ----
-async function renderFeed(){
-  const feed=document.getElementById('feed'); if(!feed)return;
-  const posts=await db.list();
+// ---- estado do mural ----
+let POSTS=[], REACTS=[], COMS=[], POSTBYID={};
+const REACTIONS=['❤️','🔥','👏','😂','😮'];
+
+async function refreshMural(){
+  POSTS=await db.posts(); REACTS=await db.reactions(); COMS=await db.comments();
+  POSTBYID={}; POSTS.forEach(p=>POSTBYID[String(p.id)]=p);
+  renderFeed(); renderSelos(); placeMoto();
+  if(openDayNum) loadDayDiary(openDayNum);
+}
+
+function postHtml(p,compact){
   const u=getUser();
-  document.getElementById('muralSub').textContent = CLOUD
-    ? (u? ('Você está como '+u.name+' · atualiza pra todo o grupo') : 'Entre pra postar — atualiza pra todo o grupo')
-    : 'Modo local (sem nuvem): posts ficam só neste aparelho.';
-  if(!posts.length){ feed.innerHTML='<div class="feed-empty">Ainda sem posts.<br>Seja o primeiro a mandar uma foto da estrada! 🏍️</div>'; return; }
-  feed.innerHTML=posts.map(p=>{
-    const ini=(p.author||'?').trim().charAt(0).toUpperCase();
-    const when=new Date(p.created_at).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
-    const badge = p.kind==='checkin'
-      ? '<span class="post-badge">✅ tô bem</span>'
-      : (p.day?('<span class="post-badge day">Dia '+p.day+'</span>'):'');
-    return '<div class="post"><div class="post-top">'
-      +'<div class="post-av">'+esc(ini)+'</div>'
-      +'<div><div class="post-who">'+esc(p.author||'Alguém')+'</div><div class="post-meta">'+when+'</div></div>'
-      +badge+'</div>'
-      +(p.text?'<div class="post-txt">'+esc(p.text)+'</div>':'')
-      +(p.photo_url?'<img class="post-photo" src="'+p.photo_url+'" alt="">':'')
-      +'</div>';
+  const ini=(p.author||'?').trim().charAt(0).toUpperCase();
+  const when=new Date(p.created_at).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+  const badge = p.kind==='checkin' ? '<span class="post-badge">✅ tô bem</span>'
+    : (!compact && p.day?('<span class="post-badge day">Dia '+p.day+'</span>'):'');
+  const canDel = u && p.author===u.name;
+  const del = canDel? '<button class="pdel" data-pid="'+p.id+'" title="Excluir">🗑️</button>' : '';
+  // reações
+  const rHere=REACTS.filter(r=>String(r.post_id)===String(p.id));
+  const rbar=REACTIONS.map(e=>{
+    const c=rHere.filter(r=>r.emoji===e).length;
+    const mine=u&&rHere.some(r=>r.emoji===e&&r.author===u.name);
+    return '<button class="rbtn'+(mine?' on':'')+'" data-pid="'+p.id+'" data-emoji="'+e+'">'+e+(c?'<i>'+c+'</i>':'')+'</button>';
   }).join('');
+  // comentários
+  const cHere=COMS.filter(c=>String(c.post_id)===String(p.id));
+  const clist=cHere.map(c=>'<div class="cmt"><b>'+esc(c.author)+'</b> '+esc(c.text)+'</div>').join('');
+  const cbox='<div class="cmts">'+clist
+    +'<div class="cadd"><input class="cin" data-pid="'+p.id+'" placeholder="Comentar…" maxlength="200">'
+    +'<button class="csend" data-pid="'+p.id+'">Enviar</button></div></div>';
+  return '<div class="post"><div class="post-top">'
+    +'<div class="post-av">'+esc(ini)+'</div>'
+    +'<div style="min-width:0"><div class="post-who">'+esc(p.author||'Alguém')+'</div><div class="post-meta">'+when+'</div></div>'
+    +badge+del+'</div>'
+    +(p.text?'<div class="post-txt">'+esc(p.text)+'</div>':'')
+    +(p.photo_url?'<img class="post-photo" src="'+p.photo_url+'" alt="">':'')
+    +'<div class="rbar">'+rbar+'</div>'
+    +cbox
+    +'</div>';
+}
+
+function renderFeed(){
+  const feed=document.getElementById('feed'); if(!feed)return;
+  const u=getUser();
+  const sub=document.getElementById('muralSub');
+  if(sub) sub.textContent = CLOUD
+    ? (u? ('Você está como '+u.name+' · aparece pra todo o grupo') : 'Entre pra postar — aparece pra todo o grupo')
+    : 'Modo local (sem nuvem): posts ficam só neste aparelho.';
+  const feedPosts=POSTS.filter(p=>p.kind!=='largou' && p.kind!=='chegada');
+  if(!feedPosts.length){ feed.innerHTML='<div class="feed-empty">Ainda sem posts.<br>Seja o primeiro a mandar uma foto da estrada! 🏍️</div>'; return; }
+  feed.innerHTML=feedPosts.map(p=>postHtml(p,false)).join('');
 }
 
 // ---- composer ----
 let composerDay=1;
 function openComposer(day){
   if(!requireLogin())return;
-  composerDay=day||tripDayNum()||1; if(composerDay<1)composerDay=1; if(composerDay>21)composerDay=21;
+  let cd = day||computeTripDay(); if(cd<1)cd=1; if(cd>21)cd=21; composerDay=cd;
   const sel=document.getElementById('cDay');
   sel.innerHTML=days.map(d=>'<option value="'+d.d+'">Dia '+d.d+' · '+d.to.split(' · ')[0]+'</option>').join('');
   sel.value=composerDay;
@@ -1039,36 +1197,72 @@ async function submitPost(){
   try{
     let photo_url=null; if(file) photo_url=await db.upload(file);
     await db.add({day,author:u.name,text,kind:'post',photo_url});
+    // postar no dia = automaticamente "cheguei/tô bem" nesse dia
+    await ensureCheckin(u.name,day);
     st.className='c-status ok'; st.textContent='Publicado! 🎉';
-    setTimeout(()=>{ closeComposer(); renderFeed(); const dd=document.getElementById('dayDiary'); if(dd)loadDayDiary(day); },600);
+    await refreshMural();
+    setTimeout(()=>{ closeComposer(); },500);
   }catch(e){ console.warn(e); st.className='c-status err'; st.textContent='Não deu pra enviar. Tenta de novo.'; }
+}
+async function ensureCheckin(author,day){
+  const has=POSTS.some(p=>p.kind==='checkin'&&+p.day===+day&&p.author===author);
+  if(!has) await db.add({day,author,text:'',kind:'checkin',photo_url:null});
 }
 
 // ---- diário por dia (dentro da folha do dia) ----
-async function loadDayDiary(n){
+function loadDayDiary(n){
   const box=document.getElementById('dayDiary'); if(!box)return;
-  const all=await db.list();
-  const mine=all.filter(p=>+p.day===+n);
+  const mine=POSTS.filter(p=>+p.day===+n && p.kind!=='largou');
   const u=getUser();
   const checked = u && mine.some(p=>p.kind==='checkin' && p.author===u.name);
   let html='';
-  html+='<button class="post-btn ghost" style="margin-bottom:10px" '
-      + (checked?'disabled ':'') + 'onclick="doCheckin('+n+')">'
-      + (checked?'✅ Você marcou que chegou':'✅ Cheguei / tô bem neste dia')+'</button>';
-  if(!mine.length){ html+='<div class="feed-empty" style="padding:10px">Sem posts deste dia ainda.</div>'; }
-  else html+=mine.map(p=>{
-    const when=new Date(p.created_at).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
-    const b=p.kind==='checkin'?'<span class="post-badge">✅ tô bem</span>':'';
-    return '<div class="post" style="margin-bottom:10px"><div class="post-top"><div class="post-av">'+esc((p.author||'?').charAt(0).toUpperCase())+'</div><div><div class="post-who">'+esc(p.author)+'</div><div class="post-meta">'+when+'</div></div>'+b+'</div>'
-      +(p.text?'<div class="post-txt">'+esc(p.text)+'</div>':'')
-      +(p.photo_url?'<img class="post-photo" src="'+p.photo_url+'" alt="">':'')+'</div>';
-  }).join('');
+  html+='<button class="post-btn ghost ckbtn'+(checked?' done':'')+'" data-day="'+n+'" style="margin-bottom:12px">'
+      + (checked?'✅ Você marcou que chegou — toque pra desmarcar':'✅ Marcar: cheguei / tô bem neste dia')+'</button>';
+  const shown=mine.filter(p=>p.kind!=='checkin' || true); // mostra tudo, inclusive check-ins
+  if(!shown.length){ html+='<div class="feed-empty" style="padding:8px">Sem posts deste dia ainda.</div>'; }
+  else html+=shown.map(p=>postHtml(p,true)).join('');
   box.innerHTML=html;
 }
 async function doCheckin(n){
   const u=getUser(); if(!u){requireLogin();return;}
-  try{ await db.add({day:n,author:u.name,text:'',kind:'checkin',photo_url:null}); loadDayDiary(n); renderFeed(); }
+  const existing=POSTS.find(p=>p.kind==='checkin'&&+p.day===+n&&p.author===u.name);
+  try{
+    if(existing) await db.del(existing.id);          // desmarca
+    else await db.add({day:n,author:u.name,text:'',kind:'checkin',photo_url:null}); // marca
+    await refreshMural();
+  }catch(e){ console.warn(e); }
+}
+async function doLargar(){
+  const u=getUser(); if(!u){requireLogin();return;}
+  if(POSTS.some(p=>p.kind==='largou')) return;
+  try{ await db.add({day:0,author:u.name,text:'',kind:'largou',photo_url:null}); await refreshMural(); }
   catch(e){ console.warn(e); }
+}
+async function delPost(id){
+  const p=POSTBYID[String(id)]; const u=getUser();
+  if(!p || !u || p.author!==u.name) return;
+  if(!confirm('Excluir este post?')) return;
+  try{ await db.del(id); await refreshMural(); }catch(e){ console.warn(e); }
+}
+async function toggleReact(id,emoji){
+  const u=getUser(); if(!u){requireLogin();return;}
+  const has=REACTS.some(r=>String(r.post_id)===String(id)&&r.emoji===emoji&&r.author===u.name);
+  try{ await db.react(id,u.name,emoji,has); await refreshMural(); }catch(e){ console.warn(e); }
+}
+async function addComment(id,text){
+  const u=getUser(); if(!u){requireLogin();return;}
+  text=(text||'').trim(); if(!text) return;
+  try{ await db.comment(id,u.name,text); await refreshMural(); }catch(e){ console.warn(e); }
+}
+// delegação de cliques do mural (feed + diário do dia)
+function onMuralClick(e){
+  const rb=e.target.closest('.rbtn'); if(rb){ toggleReact(rb.dataset.pid,rb.dataset.emoji); return; }
+  const cs=e.target.closest('.csend'); if(cs){ const inp=document.querySelector('.cin[data-pid="'+cs.dataset.pid+'"]'); if(inp){addComment(cs.dataset.pid,inp.value); inp.value='';} return; }
+  const pd=e.target.closest('.pdel'); if(pd){ delPost(pd.dataset.pid); return; }
+  const ck=e.target.closest('.ckbtn'); if(ck){ doCheckin(+ck.dataset.day); return; }
+}
+function onMuralKey(e){
+  if(e.key==='Enter'){ const inp=e.target.closest('.cin'); if(inp){ addComment(inp.dataset.pid,inp.value); inp.value=''; } }
 }
 
 // ---- clima (Open-Meteo, sem chave) ----
@@ -1100,16 +1294,37 @@ async function loadWeather(n){
   }catch(e){ el.className='wx muted'; el.textContent='Não deu pra carregar a previsão agora.'; }
 }
 
-// ---- selos / conquistas ----
+// ---- selos / conquistas (carimbos de viagem) ----
 const SELOS=[
- {d:1,e:'🌊',n:'Cataratas'},{d:5,e:'🏔️',n:'Cruzou os Andes'},{d:7,e:'⛴️',n:'Entrou na Austral'},
- {d:11,e:'💎',n:'Capillas de Mármol'},{d:13,e:'🧊',n:'Fim da Austral'},{d:18,e:'🛂',n:'De volta ao Brasil'},
- {d:21,e:'🏁',n:'Expedição completa'}
+ {d:1, short:'CATARATAS', full:'Cataratas do Iguaçu', c:'#3f9ab0', r:-8},
+ {d:5, short:'ANDES',     full:'Cruzou os Andes',     c:'#d9822b', r:6},
+ {d:7, short:'AUSTRAL',   full:'Entrou na Austral',   c:'#3f8ea3', r:-5},
+ {d:11,short:'MÁRMOLES',  full:'Capillas de Mármol',  c:'#2fa9c4', r:7},
+ {d:13,short:'FIM DA\u00A0AUSTRAL', full:'Fim da Carretera', c:'#7bb0c9', r:-6},
+ {d:18,short:'BRASIL',    full:'De volta ao Brasil',  c:'#6fce8f', r:5},
+ {d:21,short:'COMPLETA',  full:'Expedição completa',  c:'#f2a63c', r:-4},
 ];
+function stampSVG(s,on){
+  const ink=on?s.c:'#5a655d';
+  const op=on?1:.6;
+  const fs=s.short.length>8?9.5:12;
+  return '<svg viewBox="0 0 100 100" class="stamp-svg" style="opacity:'+op+'">'
+   +'<g transform="rotate('+s.r+' 50 50)">'
+   +'<circle cx="50" cy="50" r="43" fill="none" stroke="'+ink+'" stroke-width="1.6" stroke-dasharray="2.5 3.5"/>'
+   +'<circle cx="50" cy="50" r="36" fill="none" stroke="'+ink+'" stroke-width="2.4"/>'
+   +'<text x="50" y="35" text-anchor="middle" fill="'+ink+'" font-family="Bebas Neue" font-size="8.5" letter-spacing="1.2">EXPEDIÇÃO</text>'
+   +'<line x1="24" y1="40" x2="76" y2="40" stroke="'+ink+'" stroke-width="1"/>'
+   +'<text x="50" y="55" text-anchor="middle" fill="'+ink+'" font-family="Oswald" font-weight="700" font-size="'+fs+'" letter-spacing=".5">'+s.short+'</text>'
+   +'<line x1="24" y1="60" x2="76" y2="60" stroke="'+ink+'" stroke-width="1"/>'
+   +'<text x="50" y="71" text-anchor="middle" fill="'+ink+'" font-family="Bebas Neue" font-size="8.5" letter-spacing="1.5">DIA '+s.d+'</text>'
+   +'</g></svg>';
+}
 function renderSelos(){
   const el=document.getElementById('selos'); if(!el)return;
-  const cur=tripDayNum();
-  el.innerHTML=SELOS.map(s=>'<div class="selo'+(cur>=s.d?' on':'')+'"><div class="se">'+s.e+'</div><div class="sn">'+s.n+'</div></div>').join('');
+  const cur=computeTripDay();
+  el.innerHTML=SELOS.map(s=>{const on=cur>=s.d;
+    return '<div class="selo'+(on?' on':'')+'">'+stampSVG(s,on)+'<div class="sn">'+s.full+'</div></div>';
+  }).join('');
 }
 function renderPlaylist(){
   const el=document.getElementById('playlistCard'); if(!el)return;
@@ -1117,46 +1332,42 @@ function renderPlaylist(){
   el.innerHTML='<iframe style="border-radius:16px" src="https://open.spotify.com/embed/playlist/'+CONFIG.SPOTIFY
     +'?utm_source=generator" height="152" allow="encrypted-media" loading="lazy"></iframe>';
 }
-function setupMural(){ setupLogin(); setupComposer(); renderSelos(); renderPlaylist(); renderFeed(); }
+function setupMural(){
+  setupLogin(); setupComposer(); renderPlaylist();
+  document.addEventListener('click',onMuralClick);
+  document.addEventListener('keydown',onMuralKey);
+  refreshMural();
+}
 
-/* ============ MOTO NO MAPA (anda conforme os dias) ============ */
-// mapeia cada dia -> índice na routeCoords (0 = Limeira/saída)
+/* ============ MOTO NO MAPA ============ */
+// dia da viagem = dias desde que largaram (+ check-ins). -1 = ainda não largaram.
 const dayRouteIdx={1:1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,10:10,11:10,12:11,13:11,14:12,15:13,16:14,17:15,18:16,19:17,20:18,21:19};
-const TRIP_START=new Date('2026-09-10T00:00:00-03:00');
-function tripDayNum(){ // <1 = ainda não largou; 1..21 durante; >21 = concluída
-  const now=new Date();
-  return Math.floor((now - TRIP_START)/864e5)+1;
+function largouAt(){ const l=POSTS.filter(p=>p.kind==='largou').map(p=>p.created_at).sort(); return l.length?l[0]:null; }
+function computeTripDay(){
+  const l=largouAt();
+  let d = l ? Math.floor((Date.now()-new Date(l).getTime())/864e5) : -1;
+  POSTS.forEach(p=>{ if(p.kind==='checkin' && +p.day>d) d=+p.day; }); // check-in adianta a moto
+  return d>21?21:d;
 }
+function tripDayNum(){ return computeTripDay(); }
 let motoMarker=null, simRunning=false;
-function motoLL(dayNum){
-  if(dayNum<1) return routeCoords[0];
-  if(dayNum>21) return routeCoords[19];
-  return routeCoords[dayRouteIdx[dayNum]];
-}
+function motoLL(d){ if(d<1) return routeCoords[0]; if(d>21) return routeCoords[19]; return routeCoords[dayRouteIdx[d]]; }
 function ensureMoto(ll){
   if(!motoMarker){
     const icon=L.divIcon({className:'moto-wrap',html:'<div class="moto">🏍️</div>',iconSize:[38,38],iconAnchor:[19,19]});
     motoMarker=L.marker(ll,{icon,zIndexOffset:1200}).addTo(_map);
   } else motoMarker.setLatLng(ll);
 }
-function motoReal(){ if(_map){ ensureMoto(motoLL(tripDayNum())); updateMotoBar(); } }
-function updateMotoBar(){
+function placeMoto(){ if(!_map)return; const d=computeTripDay(); ensureMoto(motoLL(d)); updateMotoBar(d); }
+function updateMotoBar(d){
   const info=document.getElementById('mbInfo'), btn=document.getElementById('simBtn');
-  if(!info) return;
-  const n=tripDayNum();
-  if(n<1){
-    const faltam=1-n;
-    info.innerHTML='🏍️ <b>Largada em '+faltam+(faltam===1?' dia':' dias')+'</b> · 10/09';
-    btn.textContent='▶ Ver a rota';
-  } else if(n>21){
-    info.innerHTML='🏁 <b>Expedição concluída!</b> · 10.682 km';
-    btn.textContent='▶ Rever a viagem';
-  } else {
-    const d=dayByN(n);
-    info.innerHTML='<b>Dia '+n+' de 21</b> · '+(d?d.to.split(' · ')[0]:'');
-    btn.textContent='▶ Rever a viagem';
-  }
+  if(!info||!btn) return;
+  if(d<0){ info.innerHTML='🏍️ <b>Prontos pra largar</b> · toque em Largar quando saírem'; btn.textContent='🏍️ Largar!'; }
+  else if(d===0){ info.innerHTML='🏁 <b>Largaram!</b> · saindo de Limeira'; btn.textContent='▶ Rever a viagem'; }
+  else if(d>=21){ info.innerHTML='🏁 <b>Expedição concluída!</b> · 10.682 km'; btn.textContent='▶ Rever a viagem'; }
+  else { const dd=dayByN(d); info.innerHTML='<b>Dia '+d+' de 21</b> · '+(dd?dd.to.split(' · ')[0]:''); btn.textContent='▶ Rever a viagem'; }
 }
+function onSimBtn(){ if(computeTripDay()<0) doLargar(); else simulate(); }
 function simulate(){
   if(simRunning||!_map) return; simRunning=true;
   const info=document.getElementById('mbInfo');
@@ -1164,7 +1375,7 @@ function simulate(){
   ensureMoto(pts[0]);
   const idxToDay={}; Object.keys(dayRouteIdx).forEach(dn=>{ const i=dayRouteIdx[dn]; if(!(i in idxToDay)) idxToDay[i]=+dn; });
   (function tick(){
-    if(seg>=pts.length-1){ simRunning=false; motoReal(); return; }
+    if(seg>=pts.length-1){ simRunning=false; placeMoto(); return; }
     const a=pts[seg], b=pts[seg+1], k=t/stepsPerSeg;
     motoMarker.setLatLng([a[0]+(b[0]-a[0])*k, a[1]+(b[1]-a[1])*k]);
     t++;
@@ -1173,10 +1384,10 @@ function simulate(){
   })();
 }
 function setupMoto(){
-  motoReal();
+  placeMoto();
   const btn=document.getElementById('simBtn');
-  if(btn) btn.addEventListener('click',simulate);
-  setInterval(motoReal,3600000);
+  if(btn) btn.addEventListener('click',onSimBtn);
+  setInterval(placeMoto,1800000); // reposiciona a cada 30 min
 }
 
 /* ============ INIT ============ */
