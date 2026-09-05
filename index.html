@@ -685,12 +685,22 @@ const CONFIG = {
   BUCKET: 'fotos',                  // bucket do Storage (público)
   GROUP_PIN: 'moto2026',            // senha do grupo (troque pela que quiser)
   ADMIN: '19982691909',             // telefone que pode zerar os dados (Ana)
+  LARGADOR: '19981813537',          // só este telefone pode dar a largada (Cristiano)
   SPOTIFY: '37i9dQZF1DX9wC1KY45plY',// playlist do grupo
   // Participantes: cada um entra com o telefone + a senha acima.
   // Ex.: {name:'João', phone:'19998887777'}
   PARTICIPANTS: [
-    {name:'Ana Júlia', phone:'19982691909'},
-    {name:'Cristiano', phone:'19981813537'}
+    {name:'Ana Júlia',  phone:'19982691909'},
+    {name:'Cristiano',  phone:'19981813537'},
+    {name:'Nilton',     phone:'19997681340'},
+    {name:'Ricardo B',  phone:'19981751890'},
+    {name:'Dorival',    phone:'19997747921'},
+    {name:'Ricardo R',  phone:'19984061993'},
+    {name:'Fernandão',  phone:'19974147231'},
+    {name:'Bernardo',   phone:'11999196198'},
+    {name:'Bts',        phone:'66996540616'},
+    {name:'Mario',      phone:'19981319864'},
+    {name:'Fernando',   phone:'19991957608'}
   ]
 };
 
@@ -926,9 +936,11 @@ function openSaida(){
       <p>É hoje que a estrada começa. Que a expedição de vocês seja leve, o tempo firme e a moto sempre respondendo.</p>
       <p>Cuidem uns dos outros, curtam cada paisagem e voltem com a memória cheia. <b>A liberdade não tem fim.</b></p>
       <p style="color:var(--ink-faint);font-size:13px;margin-top:10px">21 dias · 10.682 km · Brasil, Argentina, Chile e Paraguai</p>
-    </div>
-    <button class="post-btn" id="largarBtn2" style="margin-top:16px">🏍️ Largar agora — começar a contagem</button>
-    <div style="height:10px"></div>`;
+    </div>`
+    + (canLargar()
+        ? '<button class="post-btn" id="largarBtn2" style="margin-top:6px">🏍️ Largar agora — começar a contagem</button>'
+        : '<div class="recado" style="margin-top:6px;text-align:center;color:var(--ink-dim);font-size:13px">A largada é dada pelo Cristiano. Assim que ele largar, a moto começa a andar no mapa pra todo mundo. 🏁</div>')
+    + `<div style="height:10px"></div>`;
   const lb=document.getElementById('largarBtn2');
   if(lb) lb.addEventListener('click',()=>{ doLargar(); closeSheet(); });
   openSheet();
@@ -1230,6 +1242,7 @@ function renderAdmin(){
 function getUser(){ try{return JSON.parse(localStorage.getItem('esf_user'));}catch(e){return null;} }
 function setUser(u){ localStorage.setItem('esf_user',JSON.stringify(u)); }
 function normPhone(s){ return (s||'').replace(/\D/g,''); }
+function canLargar(){ const u=getUser(); return !!(u && CONFIG.LARGADOR && normPhone(u.phone)===normPhone(CONFIG.LARGADOR)); }
 function requireLogin(){ if(getUser())return true; document.getElementById('loginGate').classList.add('on'); return false; }
 function showGate(){ if(!getUser()) document.getElementById('loginGate').classList.add('on'); }
 function tryLogin(){
@@ -1392,6 +1405,7 @@ async function doCheckin(n){
 }
 async function doLargar(){
   const u=getUser(); if(!u){requireLogin();return;}
+  if(!canLargar()){ alert('Só o Cristiano pode dar a largada. 🏍️'); return; }
   if(POSTS.some(p=>p.kind==='largou')) return;
   try{ await db.add({day:0,author:u.name,text:'',kind:'largou',photo_url:null}); await refreshMural(); }
   catch(e){ console.warn(e); }
@@ -1656,7 +1670,10 @@ function placeMoto(){ if(!_map)return; const d=computeTripDay(); ensureMoto(moto
 function updateMotoBar(d){
   const info=document.getElementById('mbInfo'), btn=document.getElementById('simBtn');
   if(!info||!btn) return;
-  if(d<0){ info.innerHTML='🏍️ <b>Prontos pra largar</b> · toquem em Largar quando saírem'; btn.style.display=''; btn.textContent='🏍️ Largar!'; }
+  if(d<0){
+    if(canLargar()){ info.innerHTML='🏍️ <b>Prontos pra largar</b> · toque quando saírem'; btn.style.display=''; btn.textContent='🏍️ Largar!'; }
+    else { info.innerHTML='🏍️ <b>Aguardando a largada</b> · só o Cristiano pode largar'; btn.style.display='none'; }
+  }
   else if(d===0){ info.innerHTML='🏁 <b>Largaram!</b> · saindo de Limeira'; btn.style.display='none'; }
   else if(d>=21){ info.innerHTML='🏁 <b>Expedição concluída!</b> · 10.682 km'; btn.style.display='none'; }
   else { const dd=dayByN(d); info.innerHTML='<b>Dia '+d+' de 21</b> · '+(dd?dd.to.split(' · ')[0]:''); btn.style.display='none'; }
