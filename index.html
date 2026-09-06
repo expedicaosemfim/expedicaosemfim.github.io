@@ -248,6 +248,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .tip .te{font-size:18px;flex:none;}
 .credit{text-align:center;color:var(--ink-faint);font-size:11.5px;padding:8px 20px 20px;line-height:1.6;}
 
+.logout-btn{display:block;margin:8px auto 0;color:var(--ink-faint);font-size:12px;text-decoration:underline;}
 .prof-km-big{margin-top:16px;font-size:15px;color:var(--ink-dim);}
 .prof-km-big b{font-family:'Bebas Neue';font-size:40px;color:var(--sand);letter-spacing:1px;}
 .prof-km-big span{margin-left:2px;}
@@ -510,6 +511,7 @@ select.c-input{appearance:none;}
     <input type="file" id="profAvInput" accept="image/*" style="display:none">
     <button class="prof-avbtn" id="profAvBtn">Trocar foto</button>
     <div class="prof-name" id="profName">—</div>
+    <button class="logout-btn" id="logoutBtn">trocar de usuário</button>
     <div class="prof-km-wrap">
       <div class="prof-km-big"><b id="profKmBig">0</b> <span>km rodados</span></div>
       <div class="prof-km-row">
@@ -1561,6 +1563,8 @@ function setupProfile(){
     ks.textContent='…'; try{ await saveProfile({km:v}); }catch(e){console.warn(e);}
     ks.textContent='Salvo ✓'; setTimeout(()=>ks.textContent='Salvar',1200); renderProfile();
   });
+  const lo=document.getElementById('logoutBtn');
+  if(lo) lo.addEventListener('click',()=>{ localStorage.removeItem('esf_user'); location.reload(); });
   const ac=document.getElementById('addCountryBtn');
   if(ac) ac.addEventListener('click',async()=>{
     const u=getUser(); if(!u){requireLogin();return;}
@@ -1686,7 +1690,9 @@ function setupMoto(){
 }
 
 /* ============ INIT ============ */
-buildMap(); buildTimeline(); buildChecklist(); buildAttn(); countdown(); setupMoto(); setupMural(); showGate();
+buildMap(); buildTimeline(); buildChecklist(); buildAttn(); countdown(); setupMoto(); setupMural();
+(function(){ const su=getUser(); if(su && !su.phone){ localStorage.removeItem('esf_user'); } })();
+showGate();
 setInterval(countdown,30000);
 </script>
 </body>
