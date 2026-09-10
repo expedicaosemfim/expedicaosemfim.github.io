@@ -1235,7 +1235,7 @@ async function resetAll(){
 function renderAdmin(){
   const box=document.getElementById('adminBox'); if(!box)return;
   const u=getUser();
-  if(u && CONFIG.ADMIN && normPhone(u.phone)===normPhone(CONFIG.ADMIN)){
+  if(u && CONFIG.ADMIN && phoneEq(u.phone,CONFIG.ADMIN)){
     box.innerHTML='<button class="reset-btn" onclick="resetAll()">🧹 Zerar dados de teste (só você vê)</button>';
   } else box.innerHTML='';
 }
@@ -1244,7 +1244,8 @@ function renderAdmin(){
 function getUser(){ try{return JSON.parse(localStorage.getItem('esf_user'));}catch(e){return null;} }
 function setUser(u){ localStorage.setItem('esf_user',JSON.stringify(u)); }
 function normPhone(s){ return (s||'').replace(/\D/g,''); }
-function canLargar(){ const u=getUser(); return !!(u && CONFIG.LARGADOR && normPhone(u.phone)===normPhone(CONFIG.LARGADOR)); }
+function phoneEq(a,b){ a=normPhone(a); b=normPhone(b); if(!a||!b)return false; return a===b || (a.length>=8&&b.length>=8&&a.slice(-8)===b.slice(-8)); }
+function canLargar(){ const u=getUser(); return !!(u && CONFIG.LARGADOR && phoneEq(u.phone,CONFIG.LARGADOR)); }
 function requireLogin(){ if(getUser())return true; document.getElementById('loginGate').classList.add('on'); return false; }
 function showGate(){ if(!getUser()) document.getElementById('loginGate').classList.add('on'); }
 function tryLogin(){
@@ -1253,14 +1254,14 @@ function tryLogin(){
   const err=document.getElementById('lgErr');
   if(phone.length<8){ err.className='c-status err'; err.textContent='Digite seu telefone com DDD.'; return; }
   if(pin!==CONFIG.GROUP_PIN){ err.className='c-status err'; err.textContent='Senha do grupo incorreta.'; return; }
-  let name=null;
+  let name=null, canonical=phone;
   const list=CONFIG.PARTICIPANTS||[];
   if(list.length){
     const p=list.find(x=>{ const a=normPhone(x.phone); return a===phone || (a.length>=8 && (a.endsWith(phone.slice(-8))||phone.endsWith(a.slice(-8)))); });
     if(!p){ err.className='c-status err'; err.textContent='Esse telefone não está na lista do grupo.'; return; }
-    name=p.name;
+    name=p.name; canonical=normPhone(p.phone);
   } else { name='Piloto'; } // enquanto a lista não foi preenchida
-  setUser({name,phone});
+  setUser({name,phone:canonical});
   document.getElementById('loginGate').classList.remove('on');
   refreshMural(); if(openDayNum)loadDayDiary(openDayNum);
 }
@@ -1653,8 +1654,8 @@ const dayRouteIdx={1:1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,10:10,11:10,12:11,13:11,1
 function largouAt(){ const l=POSTS.filter(p=>p.kind==='largou').map(p=>p.created_at).sort(); return l.length?l[0]:null; }
 function computeTripDay(){
   const l=largouAt();
-  if(l){ // largaram: conta pelos dias reais desde a largada (fonte da verdade)
-    const d=Math.floor((Date.now()-new Date(l).getTime())/864e5);
+  if(l){ // largaram: o dia da largada já é o DIA 1 (a moto sai na hora)
+    const d=Math.floor((Date.now()-new Date(l).getTime())/864e5)+1;
     return d>21?21:d;
   }
   // ainda não largaram: se alguém marcou "cheguei" num dia, a moto vai pra lá
@@ -1674,11 +1675,10 @@ function placeMoto(){ if(!_map)return; const d=computeTripDay(); ensureMoto(moto
 function updateMotoBar(d){
   const info=document.getElementById('mbInfo'), btn=document.getElementById('simBtn');
   if(!info||!btn) return;
-  if(d<0){
+  if(d<1){
     if(canLargar()){ info.innerHTML='🏍️ <b>Prontos pra largar</b> · toque quando saírem'; btn.style.display=''; btn.textContent='🏍️ Largar!'; }
     else { info.innerHTML='🏍️ <b>Aguardando a largada</b> · só o Cristiano pode largar'; btn.style.display='none'; }
   }
-  else if(d===0){ info.innerHTML='🏁 <b>Largaram!</b> · saindo de Limeira'; btn.style.display='none'; }
   else if(d>=21){ info.innerHTML='🏁 <b>Expedição concluída!</b> · 10.682 km'; btn.style.display='none'; }
   else { const dd=dayByN(d); info.innerHTML='<b>Dia '+d+' de 21</b> · '+(dd?dd.to.split(' · ')[0]:''); btn.style.display='none'; }
 }
