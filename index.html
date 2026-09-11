@@ -2,6 +2,9 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
 <title>Expedição Sem Fim</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -408,6 +411,11 @@ select.c-input{appearance:none;}
 .nav button.active{color:var(--amber);}
 .nav button.active svg{filter:drop-shadow(0 0 5px var(--amber-glow));}
 </style>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
+}
+</script>
 </head>
 <body>
 
@@ -507,7 +515,7 @@ select.c-input{appearance:none;}
     <div class="tip"><span class="te">😴</span><span>Vários dias de 800–900 km. Revezar a liderança e parar antes do cansaço bater.</span></div>
   </div>
 
-  <div class="credit">Feito com carinho para a Expedição Sem Fim 🧭<br>Boa viagem e voltem inteiros.</div>
+  <div class="credit">Feito com carinho para a Expedição Sem Fim 🧭<br>Boa viagem e voltem inteiros.<br><span style="opacity:.5;font-size:11px">versão 14</span></div>
 </section>
 
 <!-- ===== PERFIL ===== -->
